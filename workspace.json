@@ -1,8 +1,66 @@
 {
   "version": 1,
-  "projects": {},
+  "projects": {
+    "ims": {
+      "root": "apps/ims",
+      "sourceRoot": "apps/ims/src",
+      "projectType": "application",
+      "prefix": "ims",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/ims",
+            "main": "apps/ims/src/main.ts",
+            "tsConfig": "apps/ims/tsconfig.app.json",
+            "assets": ["apps/ims/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/ims/src/environments/environment.ts",
+                  "with": "apps/ims/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "ims:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/ims/.eslintrc",
+            "tsConfig": [
+              "apps/ims/tsconfig.app.json",
+              "apps/ims/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/ims/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/ims/jest.config.js",
+            "tsConfig": "apps/ims/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
   "cli": {
-    "defaultCollection": "@nrwl/workspace"
+    "defaultCollection": "@nrwl/nest"
   },
   "schematics": {
     "@nrwl/workspace": {
@@ -62,5 +120,6 @@
         "linter": "eslint"
       }
     }
-  }
+  },
+  "defaultProject": "ims"
 }
