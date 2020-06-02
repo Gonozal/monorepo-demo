@@ -11,6 +11,15 @@
   },
   "files.autoSave": "onFocusChange",
   "cSpell.words": [
-    "nestjs"
+    "camelize",
+    "dasherize",
+    "dataloader",
+    "devkit",
+    "esnext",
+    "nestjs",
+    "nrwl",
+    "postgres",
+    "readonly",
+    "typeorm"
   ]
 }

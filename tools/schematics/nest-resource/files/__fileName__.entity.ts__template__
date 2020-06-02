@@ -1,0 +1,13 @@
+import { Entity, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import AppEntity from '../../app.abstract.entity';
+
+@Entity()
+@ObjectType()
+export default class <%= className %> extends AppEntity {
+  @CreateDateColumn()
+  public createdAt!: Date;
+
+  @UpdateDateColumn()
+  public updatedAt!: Date;
+}

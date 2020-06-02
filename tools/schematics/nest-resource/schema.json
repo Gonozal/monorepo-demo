@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "nest-resource",
+  "type": "object",
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "Name of the existing project",
+      "x-prompt": "What is the name of the existing project?"
+    },
+    "resourceName": {
+      "type": "string",
+      "description": "Name of the new resource (e.g. 'User', 'Location', ...)",
+      "default": "Test",
+      "x-prompt": "What should the new resource be called?"
+    }
+  },
+  "required": ["projectName"]
+}

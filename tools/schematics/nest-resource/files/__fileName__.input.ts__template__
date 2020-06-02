@@ -1,0 +1,7 @@
+import { InputType, PartialType } from '@nestjs/graphql';
+
+@InputType()
+export class Create<%= className %>Input {}
+
+@InputType()
+export class Update<%= className %>Input extends PartialType(Create<%= className %>Input) {}

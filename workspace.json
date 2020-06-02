@@ -14,7 +14,8 @@
             "outputPath": "dist/apps/ims",
             "main": "apps/ims/src/main.ts",
             "tsConfig": "apps/ims/tsconfig.app.json",
-            "assets": ["apps/ims/src/assets"]
+            "assets": ["apps/ims/src/assets"],
+            "webpackConfig": "apps/ims/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -53,6 +54,37 @@
           "options": {
             "jestConfig": "apps/ims/jest.config.js",
             "tsConfig": "apps/ims/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "graphql-shield-decorators": {
+      "root": "libs/graphql-shield-decorators",
+      "sourceRoot": "libs/graphql-shield-decorators/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/graphql-shield-decorators/.eslintrc",
+            "tsConfig": [
+              "libs/graphql-shield-decorators/tsconfig.lib.json",
+              "libs/graphql-shield-decorators/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/graphql-shield-decorators/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/graphql-shield-decorators/jest.config.js",
+            "tsConfig": "libs/graphql-shield-decorators/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
