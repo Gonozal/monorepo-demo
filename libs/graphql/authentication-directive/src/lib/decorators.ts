@@ -10,7 +10,7 @@ export function Authorized<
 >(
   rule: Rule<TContext, TSource, TArgs> | LogicRule<TContext, TSource, TArgs>
 ): <TFunction extends () => void, Y>(
-  target: Record<string, unknown> | TFunction,
+  target: any,
   propertyKey?: string | symbol,
   descriptor?: TypedPropertyDescriptor<Y>
 ) => void {
