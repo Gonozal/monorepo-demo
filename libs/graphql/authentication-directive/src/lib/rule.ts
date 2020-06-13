@@ -1,3 +1,4 @@
+import { DecoratorContext } from './../utils/types';
 import { CacheStrategy, RuleFunction } from '../utils/types';
 import { GraphQLResolveInfo } from 'graphql';
 import * as hashFunction from 'object-hash';
@@ -66,18 +67,27 @@ export class Rule<TContext, TSource, TArgs> extends Resolvable<
   ): (
     source: TSource,
     args: TArgs,
-    context: any,
+    context: DecoratorContext,
     info: GraphQLResolveInfo
   ) => Promise<boolean> {
     return async (source, args, context, info) => {
       if (context._authorization === undefined) {
         context._authorization = { cache: {} };
       }
-      if (context._authorization.cache[key] === undefined) {
-        const value = await this.ruleFunction(source, args, context, info);
-        context._authorization.cache[key] = value;
+      const cache = context._authorization.cache;
+      if (cache === undefined) {
+        throw new Error('Cache undefined on context object'); // this SHOULD never happen
       }
-      const resolvedValue: boolean = context._authorization.cache[key];
+      if (cache[key] === undefined) {
+        const value = await this.ruleFunction(
+          source,
+          args,
+          context as TContext,
+          info
+        );
+        cache[key] = value;
+      }
+      const resolvedValue: boolean = cache[key];
       return resolvedValue;
     };
   }

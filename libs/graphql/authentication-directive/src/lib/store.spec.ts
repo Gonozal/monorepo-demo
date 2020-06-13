@@ -1,10 +1,10 @@
 import { DuplicateRuleError, RuleNotFoundError } from './../utils/errors';
 import { Rule } from './rule';
-import { rule } from './factories';
 import { Store } from './store';
+
 describe('rule-store', () => {
-  let r1: Rule<any, any, any>;
-  let r2: Rule<any, any, any>;
+  let r1: Rule<unknown, unknown, unknown>;
+  let r2: Rule<unknown, unknown, unknown>;
   beforeEach(() => {
     Store.rules = {};
     r1 = new Rule('r1', 'none', async () => true);

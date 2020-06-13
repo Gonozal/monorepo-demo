@@ -18,7 +18,7 @@ describe('rule-factories', () => {
   });
 
   describe('logic-rule factory', () => {
-    let rules: Rule<any, any, any>[] = [];
+    let rules: Rule<unknown, unknown, unknown>[] = [];
     beforeEach(() => {
       rules = [
         rule()(async () => true),

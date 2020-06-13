@@ -16,7 +16,9 @@ export interface RuleArgs {
   cacheStrategy?: CacheStrategy;
 }
 
-export type StorableRule = Rule<any, any, any> | LogicRule<any, any, any>;
+export type StorableRule =
+  | Rule<unknown, unknown, unknown>
+  | LogicRule<unknown, unknown, unknown>;
 
 export interface RuleStoreRules {
   [key: string]: StorableRule;
@@ -25,7 +27,7 @@ export interface RuleStoreRules {
 export interface ExtendedGraphqlField<
   TSource,
   TContext,
-  TArgs = { [key: string]: any }
+  TArgs = { [key: string]: unknown }
 > extends GraphQLField<TSource, TContext, TArgs> {
   rules?: StorableRule[];
 }
@@ -33,7 +35,13 @@ export interface ExtendedGraphqlField<
 export interface ExtendedGraphQLObjectType<
   TSource,
   TContext,
-  TArgs = { [key: string]: any }
+  TArgs = { [key: string]: unknown }
 > extends GraphQLObjectType<TSource, TContext, TArgs> {
   authorizationRulesApplied?: boolean;
+}
+
+export interface DecoratorContext {
+  _authorization?: {
+    cache?: Record<string, boolean>;
+  };
 }

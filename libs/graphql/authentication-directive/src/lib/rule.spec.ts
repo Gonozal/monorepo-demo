@@ -2,7 +2,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import { Rule, And, Or, None } from './rule';
 
 describe('rule', () => {
-  let context: Record<string, any>;
+  let context: Record<string, unknown>;
   const resolveInfo = {} as GraphQLResolveInfo;
 
   beforeEach(() => {
@@ -196,14 +196,10 @@ describe('rule', () => {
     it('executes the rule only once', async () => {
       const context = {};
       let counter = 0;
-      const rule = new Rule(
-        'identity',
-        'contextual',
-        async (parent, args, context, info) => {
-          counter += 1;
-          return true;
-        }
-      );
+      const rule = new Rule('identity', 'contextual', async () => {
+        counter += 1;
+        return true;
+      });
       await rule.resolve(undefined, undefined, context, resolveInfo);
       await rule.resolve(undefined, undefined, context, resolveInfo);
       await rule.resolve(undefined, undefined, context, resolveInfo);
@@ -215,14 +211,10 @@ describe('rule', () => {
     it("executes the rule only once if dependencies don't change", async () => {
       const context = {};
       let counter = 0;
-      const rule = new Rule(
-        'identity',
-        'strict',
-        async (parent, args, context, info) => {
-          counter += 1;
-          return true;
-        }
-      );
+      const rule = new Rule('identity', 'strict', async () => {
+        counter += 1;
+        return true;
+      });
       await rule.resolve(undefined, undefined, context, resolveInfo);
       await rule.resolve(undefined, undefined, context, resolveInfo);
       await rule.resolve(undefined, undefined, context, resolveInfo);
@@ -232,14 +224,10 @@ describe('rule', () => {
     it('executes the rule when dependencies change', async () => {
       const context = {};
       let counter = 0;
-      const rule = new Rule(
-        'identity',
-        'strict',
-        async (parent, args, context, info) => {
-          counter += 1;
-          return true;
-        }
-      );
+      const rule = new Rule('identity', 'strict', async () => {
+        counter += 1;
+        return true;
+      });
       const user1 = { id: 1 };
       const user2 = { id: 2 };
       await rule.resolve(user1, undefined, context, resolveInfo);

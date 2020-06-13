@@ -11,13 +11,13 @@ import {
 import { Store } from './store';
 
 export class AuthDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field: ExtendedGraphqlField<any, any>) {
+  visitFieldDefinition(field: ExtendedGraphqlField<unknown, unknown>): void {
     const ruleName = this.args.authorizationRule;
     const rule = Store.getRule(ruleName);
     this.authorizeField(field, rule);
   }
 
-  visitObject(object: ExtendedGraphQLObjectType<any, any>) {
+  visitObject(object: ExtendedGraphQLObjectType<unknown, unknown>): void {
     if (object.authorizationRulesApplied) return;
     object.authorizationRulesApplied = true;
     const ruleName = this.args.authorizationRule;
@@ -29,7 +29,7 @@ export class AuthDirective extends SchemaDirectiveVisitor {
   }
 
   private authorizeField(
-    field: ExtendedGraphqlField<any, any>,
+    field: ExtendedGraphqlField<unknown, unknown>,
     rule: StorableRule
   ) {
     if (field.rules) {
