@@ -1,8 +1,8 @@
-import { RuleStore } from './rule-store';
+import { Store } from './store';
 import { Rule, And, Or, None } from './rule';
 import { v4 as uuidV4 } from 'uuid';
 
-import { RuleArgs, RuleFunction } from './types';
+import { RuleArgs, RuleFunction } from '../utils/types';
 
 export const rule = <TContext = any, TSource = any, TArgs = any>(
   args?: RuleArgs
@@ -12,7 +12,7 @@ export const rule = <TContext = any, TSource = any, TArgs = any>(
   const id = args?.name || uuidV4();
   const cacheStrategy = args?.cacheStrategy || 'contextual';
   const rule = new Rule(id, cacheStrategy, func);
-  RuleStore.rules[id] = rule;
+  Store.rules[id] = rule;
   return rule;
 };
 
@@ -21,7 +21,7 @@ export const and = <TContext = any, TSource = any, TArgs = any>(
 ): And<TContext, TSource, TArgs> => {
   const id = uuidV4();
   const rule = new And<TContext, TSource, TArgs>(id, ...rules);
-  RuleStore.rules[id] = rule;
+  Store.rules[id] = rule;
   return rule;
 };
 
@@ -30,7 +30,7 @@ export const or = <TContext = any, TSource = any, TArgs = any>(
 ): Or<TContext, TSource, TArgs> => {
   const id = uuidV4();
   const rule = new Or<TContext, TSource, TArgs>(id, ...rules);
-  RuleStore.rules[id] = rule;
+  Store.rules[id] = rule;
   return rule;
 };
 
@@ -39,6 +39,6 @@ export const none = <TContext = any, TSource = any, TArgs = any>(
 ): None<TContext, TSource, TArgs> => {
   const id = uuidV4();
   const rule = new None<TContext, TSource, TArgs>(id, ...rules);
-  RuleStore.rules[id] = rule;
+  Store.rules[id] = rule;
   return rule;
 };

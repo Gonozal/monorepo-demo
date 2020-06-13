@@ -7,13 +7,14 @@ import {
   StorableRule,
   ExtendedGraphQLObjectType,
   ExtendedGraphqlField,
-} from './types';
-import { RuleStore } from './rule-store';
+} from '../utils/types';
+import { Store } from './store';
 
 export class AuthDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: ExtendedGraphqlField<any, any>) {
     const ruleName = this.args.authorizationRule;
-    const rule = RuleStore.getRule(ruleName);
+    console.log(ruleName);
+    const rule = Store.getRule(ruleName);
     this.authorizeField(field, rule);
   }
 
@@ -21,7 +22,8 @@ export class AuthDirective extends SchemaDirectiveVisitor {
     if (object.authorizationRulesApplied) return;
     object.authorizationRulesApplied = true;
     const ruleName = this.args.authorizationRule;
-    const rule = RuleStore.getRule(ruleName);
+    console.log(ruleName);
+    const rule = Store.getRule(ruleName);
     const fields = object.getFields();
     Object.keys(fields).forEach((fieldName) => {
       this.authorizeField(fields[fieldName], rule);

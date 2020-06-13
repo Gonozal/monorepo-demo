@@ -1,4 +1,4 @@
-import { Rule, LogicRule } from './rule';
+import { Rule, LogicRule } from '../lib/rule';
 import { GraphQLResolveInfo, GraphQLField, GraphQLObjectType } from 'graphql';
 export type preResolveRule = () => () => boolean;
 

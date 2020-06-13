@@ -1,6 +1,6 @@
-import { CacheStrategy, RuleFunction } from './types';
+import { CacheStrategy, RuleFunction } from '../utils/types';
 import { GraphQLResolveInfo } from 'graphql';
-import hashFunction from 'object-hash';
+import * as hashFunction from 'object-hash';
 
 abstract class Resolvable<TContext, TSource, TArgs> {
   abstract async resolve(
@@ -16,9 +16,12 @@ export abstract class LogicRule<TContext, TSource, TArgs> extends Resolvable<
   TSource,
   TArgs
 > {
-  protected rules: Rule<TContext, TSource, TArgs>[];
+  protected rules: Resolvable<TContext, TSource, TArgs>[];
 
-  constructor(public name: string, ...rules: Rule<TContext, TSource, TArgs>[]) {
+  constructor(
+    public name: string,
+    ...rules: Resolvable<TContext, TSource, TArgs>[]
+  ) {
     super();
     this.rules = rules;
   }
@@ -66,19 +69,15 @@ export class Rule<TContext, TSource, TArgs> extends Resolvable<
     context: any,
     info: GraphQLResolveInfo
   ) => Promise<boolean> {
-    return async (source, args, ctx, info) => {
-      if (!ctx._authorization) {
-        ctx._authorization = { cache: {} };
+    return async (source, args, context, info) => {
+      if (context._authorization === undefined) {
+        context._authorization = { cache: {} };
       }
-      if (!ctx._authorization.cache[key]) {
-        ctx._authorization.cache[key] = await this.ruleFunction(
-          source,
-          args,
-          ctx,
-          info
-        );
+      if (context._authorization.cache[key] === undefined) {
+        const value = await this.ruleFunction(source, args, context, info);
+        context._authorization.cache[key] = value;
       }
-      const resolvedValue: boolean = ctx._authorization.cache[key];
+      const resolvedValue: boolean = context._authorization.cache[key];
       return resolvedValue;
     };
   }

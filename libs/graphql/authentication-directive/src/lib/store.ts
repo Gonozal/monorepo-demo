@@ -1,7 +1,7 @@
-import { RuleStoreRules, StorableRule } from './types';
-import { RuleNotFoundError, DuplicateRuleError } from './errors';
+import { RuleStoreRules, StorableRule } from '../utils/types';
+import { RuleNotFoundError, DuplicateRuleError } from '../utils/errors';
 
-export class RuleStore {
+export class Store {
   static rules: RuleStoreRules = {};
 
   static getRule(id: string) {
