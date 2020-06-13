@@ -1,0 +1,18 @@
+import {
+  Connection,
+  EntitySubscriberInterface,
+  EventSubscriber,
+} from 'typeorm';
+
+import <%= className %> from './<%= fileName %>.entity';
+
+@EventSubscriber()
+export class <%= className %>Subscriber implements EntitySubscriberInterface<<%= className %>> {
+  constructor(connection: Connection) {
+    connection.subscribers.push(this);
+  }
+
+  listenTo(): typeof <%= className %> {
+    return <%= className %>;
+  }
+}

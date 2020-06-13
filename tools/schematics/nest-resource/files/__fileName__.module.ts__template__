@@ -11,6 +11,7 @@ import <%= className %>Resolver from './<%= fileName %>.resolver';
   providers: [
     <%= className %>Resolver,
     <%= className %>Loader,
+    <%= className %>Subscriber,
     {
       provide: APP_INTERCEPTOR,
       useClass: DataLoaderInterceptor,

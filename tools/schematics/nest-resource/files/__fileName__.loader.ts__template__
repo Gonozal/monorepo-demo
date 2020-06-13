@@ -1,20 +1,15 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import DataLoader from 'dataloader';
-import { NestDataLoader } from 'nestjs-dataloader';
 import <%= className %> from './<%= fileName %>.entity';
+import { GraphQLDataLoader } from '@monorepo/graphql/dataloader';
 
 @Injectable()
-export default class <%= className %>Loader implements NestDataLoader<string, <%= className %>> {
-  constructor(
-    @InjectRepository(<%= className %>) public readonly <%= attributeName %>Repository: Repository<<%= className %>>
-  ) {}
-
-  generateDataLoader(): DataLoader<<%= className %>['id'], <%= className %>> {
-    return new DataLoader<<%= className %>['id'], <%= className %>>((keys) => {
-      const ids: string[] = keys as string[];
-      return this.<%= attributeName %>Repository.findByIds(ids);
-    });
+export default class <%= className %>Loader<T = <%= className %>> extends GraphQLDataLoader<
+  T
+> {
+  constructor(@InjectRepository(<%= className %>) primaryRepository: Repository<T>) {
+    super();
+    this.primaryRepository = primaryRepository;
   }
 }
