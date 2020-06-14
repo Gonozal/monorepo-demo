@@ -1,5 +1,6 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Authorized } from '@monorepo/graphql/authentication-directive';
+import { DataLoaderType } from '@monorepo/graphql/dataloader';
+
 import {
   Args,
   Mutation,
@@ -8,26 +9,33 @@ import {
   Resolver,
   ResolveField,
 } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+import { Loader } from 'nestjs-dataloader';
+import DataLoader from 'dataloader';
+
+import { authenticated } from './../../app.authorization';
 import {
   Create<%= className %>Input,
   Update<%= className %>Input,
 } from './test-resource.input';
-import <%= className %> from './<%= fileName %>.entity';
-import { Loader } from 'nestjs-dataloader';
-import DataLoader from 'dataloader';
-import <%= className %>Loader from './<%= fileName %>.loader';
+import { <%= className %> } from './<%= fileName %>.entity';
+import { <%= className %>Loader}  from './<%= fileName %>.loader';
 
 @Resolver(() => <%= className %>)
-export default class <%= className %>Resolver {
+export class <%= className %>Resolver {
   constructor(
     @InjectRepository(<%= className %>) public readonly <%= attributeName %>Repository: Repository<<%= className %>>
   ) {}
 
+  @Authorized(authenticated)
   @Query(() => [<%= className %>])
   public async get<%= pluralize(className) %>(): Promise<<%= className %>[]> {
     return this.<%= attributeName %>Repository.find();
   }
 
+  @Authorized(authenticated)
   @Query(() => <%= className %>, { nullable: false })
   public async get<%= className %>(
     @Args('id') id: string,
@@ -37,6 +45,7 @@ export default class <%= className %>Resolver {
     return <%= attributeName %>Loader.load(id);
   }
 
+  @Authorized(authenticated)
   @Mutation(() => <%= className %>)
   public async create<%= className %>(
     @Args('data') input: Create<%= className %>Input
@@ -45,6 +54,7 @@ export default class <%= className %>Resolver {
     return this.<%= attributeName %>Repository.save(<%= attributeName %>);
   }
 
+  @Authorized(authenticated)
   @Mutation(() => <%= className %>)
   public async update<%= className %>(
     @Args('id') id: string,

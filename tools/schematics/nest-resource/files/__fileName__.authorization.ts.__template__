@@ -1,12 +1,14 @@
 import { rule } from '@monorepo/graphql/authentication-directive';
 
+import { Context } from './../../common/context';
+
 import { Update<%= className %>Input } from './<%= fileName %>.input';
-import <%= className %> from './<%= fileName %>.entity';
+import { <%= className %> } from './<%= fileName %>.entity';
 
 export const allow = rule<
   <%= className %> | undefined,
   Update<%= className %>Input | undefined,
-  unknown
+  Context
 >({ cacheStrategy: 'strict' })(async (source, args, context, info) => {
   return true;
 });

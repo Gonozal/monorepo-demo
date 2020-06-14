@@ -4,7 +4,7 @@ import {
   EventSubscriber,
 } from 'typeorm';
 
-import <%= className %> from './<%= fileName %>.entity';
+import { <%= className %> } from './<%= fileName %>.entity';
 
 @EventSubscriber()
 export class <%= className %>Subscriber implements EntitySubscriberInterface<<%= className %>> {
