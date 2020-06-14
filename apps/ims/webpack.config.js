@@ -7,12 +7,11 @@ module.exports = (config) => {
     (rule) => rule.loader === 'ts-loader'
   );
 
-  tsLoader.loader = '@maxchehab/ts-loader';
+  tsLoader.loader = 'ts-loader';
   tsLoader.options.getCustomTransformers = (program) => ({
     before: [gqlPlugin.before({}, program)],
   });
-  tsLoader.options.transpileOnly = false;
-  tsLoader.options.emitOnly = [/\.ts$/];
+  tsLoader.options.transpileOnly = true;
 
   return config;
 };

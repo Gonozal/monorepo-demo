@@ -1,17 +1,21 @@
+import { Authorized } from '@monorepo/graphql/authentication-directive';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
-  Entity,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Field, ID, HideField, ObjectType } from '@nestjs/graphql';
-import AppEntity from '../../app.abstract.entity';
-import UserGroup from '../user-group/user-group.entity';
+
+import { authenticated } from './../../app.authorization';
+import { AppEntity } from '../../app.abstract.entity';
+import { UserGroup } from '../user-group/user-group.entity';
 
 @Entity()
 @ObjectType()
-export default class User extends AppEntity {
+@Authorized(authenticated)
+export class User extends AppEntity {
   @Column()
   public firstName!: string;
 
@@ -47,8 +51,8 @@ export default class User extends AppEntity {
   public passwordConfirmation?: string;
 
   @HideField()
-  @Column()
-  public securePassword!: string;
+  @Column({ nullable: true })
+  public securePassword?: string;
 
   // @HasMany(() => ScenarioAssignment, {
   //   foreignKey: 'assignedToId',
@@ -82,12 +86,15 @@ export default class User extends AppEntity {
   @Column('uuid')
   public userGroupId!: string;
 
+  @Field(() => UserGroup)
   @ManyToOne(() => UserGroup, (userGroup) => userGroup.users)
-  public userGroup: UserGroup;
+  public userGroup?: UserGroup;
 
+  @Field(() => Date)
   @CreateDateColumn()
   public createdAt!: Date;
 
+  @Field(() => Date)
   @UpdateDateColumn()
   public updatedAt!: Date;
 

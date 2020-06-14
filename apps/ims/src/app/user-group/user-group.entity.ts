@@ -1,4 +1,5 @@
-import { ObjectType } from '@nestjs/graphql';
+import { Authorized } from '@monorepo/graphql/authentication-directive';
+import { ObjectType, Field } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,12 +7,15 @@ import {
   OneToMany,
   UpdateDateColumn,
 } from 'typeorm';
-import AppEntity from '../../app.abstract.entity';
-import User from '../user/user.entity';
+
+import { authenticated } from './../../app.authorization';
+import { AppEntity } from '../../app.abstract.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 @ObjectType()
-export default class UserGroup extends AppEntity {
+@Authorized(authenticated)
+export class UserGroup extends AppEntity {
   @Column()
   public name!: string;
 
@@ -27,8 +31,8 @@ export default class UserGroup extends AppEntity {
   @Column({ nullable: true })
   public description?: string;
 
-  @Column({ nullable: true, default: true })
-  public active?: boolean;
+  @Column({ nullable: false, default: true })
+  public active!: boolean;
 
   // @BelongsToMany(() => TaskTemplate, {
   //   through: () => TaskTemplateAssignment,
@@ -58,12 +62,15 @@ export default class UserGroup extends AppEntity {
   // })
   // public scenarioCategories?: ScenarioCategory[];
 
+  @Field(() => [User])
   @OneToMany(() => User, (user) => user.userGroup)
-  public users: User[];
+  public users?: User[];
 
+  @Field(() => Date)
   @CreateDateColumn()
   public createdAt!: Date;
 
+  @Field(() => Date)
   @UpdateDateColumn()
   public updatedAt!: Date;
 

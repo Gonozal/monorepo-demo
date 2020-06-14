@@ -1,22 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
-import DataLoader from 'dataloader';
-import { NestDataLoader } from 'nestjs-dataloader';
-import UserGroup from './user-group.entity';
 import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { UserGroup } from './user-group.entity';
+import { GraphQLDataLoader } from '@monorepo/graphql/dataloader';
 
 @Injectable()
-export default class UserGroupLoader
-  implements NestDataLoader<string, UserGroup> {
-  constructor(
-    @InjectRepository(UserGroup)
-    public readonly userGroupRepository: Repository<UserGroup>
-  ) {}
-
-  generateDataLoader(): DataLoader<string, UserGroup> {
-    return new DataLoader<UserGroup['id'], UserGroup>((keys) => {
-      const ids: string[] = keys as string[];
-      return this.userGroupRepository.findByIds(ids);
-    });
+export class UserGroupLoader<T = UserGroup> extends GraphQLDataLoader<T> {
+  constructor(@InjectRepository(UserGroup) primaryRepository: Repository<T>) {
+    super();
+    this.primaryRepository = primaryRepository;
   }
 }

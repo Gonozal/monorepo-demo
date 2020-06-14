@@ -14,6 +14,6 @@ export class CreateUserGroupInput {
 
 @InputType()
 export class UpdateUserGroupInput extends PartialType(CreateUserGroupInput) {
-  @ValidateNested()
-  public roles?: RoleInput[];
+  // @ValidateNested()
+  // public roles?: RoleInput[];
 }

@@ -3,7 +3,7 @@ import { InputType, PartialType, Field, ID } from '@nestjs/graphql';
 @InputType()
 export class CreateUserInput {
   @Field(() => ID)
-  userGroupId: string;
+  userGroupId!: string;
 
   firstName!: string;
   lastName!: string;
