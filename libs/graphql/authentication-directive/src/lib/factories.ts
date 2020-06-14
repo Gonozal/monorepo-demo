@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { RuleArgs, RuleFunction } from '../utils/types';
 
-export const rule = <TContext = unknown, TSource = unknown, TArgs = unknown>(
+export const rule = <TSource = unknown, TArgs = unknown, TContext = unknown>(
   args?: RuleArgs
 ) => (
   func: RuleFunction<TContext, TSource, TArgs>
@@ -16,7 +16,7 @@ export const rule = <TContext = unknown, TSource = unknown, TArgs = unknown>(
   return rule;
 };
 
-export const and = <TContext = unknown, TSource = unknown, TArgs = unknown>(
+export const and = <TSource = unknown, TArgs = unknown, TContext = unknown>(
   ...rules: Rule<TContext, TSource, TArgs>[]
 ): And<TContext, TSource, TArgs> => {
   const id = uuidV4();
@@ -25,7 +25,7 @@ export const and = <TContext = unknown, TSource = unknown, TArgs = unknown>(
   return rule;
 };
 
-export const or = <TContext = unknown, TSource = unknown, TArgs = unknown>(
+export const or = <TSource = unknown, TArgs = unknown, TContext = unknown>(
   ...rules: Rule<TContext, TSource, TArgs>[]
 ): Or<TContext, TSource, TArgs> => {
   const id = uuidV4();
@@ -34,7 +34,7 @@ export const or = <TContext = unknown, TSource = unknown, TArgs = unknown>(
   return rule;
 };
 
-export const none = <TContext = unknown, TSource = unknown, TArgs = unknown>(
+export const none = <TSource = unknown, TArgs = unknown, TContext = unknown>(
   ...rules: Rule<TContext, TSource, TArgs>[]
 ): None<TContext, TSource, TArgs> => {
   const id = uuidV4();
