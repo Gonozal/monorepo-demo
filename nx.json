@@ -22,7 +22,10 @@
     "ims": {
       "tags": []
     },
-    "graphql-shield-decorators": {
+    "graphql-authentication-directive": {
+      "tags": []
+    },
+    "graphql-dataloader": {
       "tags": []
     }
   }
