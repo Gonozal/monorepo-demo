@@ -1,6 +1,6 @@
 import { NestDataLoader } from 'nestjs-dataloader';
 import * as DataLoader from 'dataloader';
-import { SimplifiedFindOptions } from './../types/query-options';
+import { SimplifiedFindOptions } from '../types/query-options';
 import { Repository, In } from 'typeorm';
 
 class GraphQLDataLoaderError extends Error {
@@ -25,7 +25,6 @@ export abstract class GraphQLDataLoader<T>
 
   private assertSingularCondition(conditionKeys: any[]): void {
     if (conditionKeys.length > 1) {
-      console.log(conditionKeys);
       throw new GraphQLDataLoaderError(
         'NestJS-Dataloader does not support where-conditions with multiple conditions'
       );
@@ -64,7 +63,7 @@ export abstract class GraphQLDataLoader<T>
     const whereObj = key.where;
     const whereObjKey = Object.keys(whereObj)[0];
     if (!whereObj) return '';
-    return `${key}-${whereObj[whereObjKey as keyof T]}`;
+    return `${whereObjKey}-${whereObj[whereObjKey as keyof T]}`;
   }
 
   protected async queryBatches(

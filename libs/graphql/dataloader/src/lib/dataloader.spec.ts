@@ -1,4 +1,4 @@
-import { graphqlDataloader } from './graphql-dataloader';
+import { graphqlDataloader } from './dataloader';
 
 describe('graphqlDataloader', () => {
   it('should work', () => {
