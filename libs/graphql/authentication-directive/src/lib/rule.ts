@@ -47,18 +47,19 @@ export class Rule<TContext, TSource, TArgs> extends Resolvable<
     context: TContext,
     info: GraphQLResolveInfo
   ): Promise<boolean> {
-    switch (this.cacheStrategy) {
-      case 'none':
-        return this.ruleFunction(source, args, context, info);
-      case 'contextual':
-        return this.resolveFromCache(this.name)(source, args, context, info);
-      case 'strict':
-        return this.resolveFromCache(`${this.name}-${this.hash(args, source)}`)(
-          source,
-          args,
-          context,
-          info
-        );
+    try {
+      switch (this.cacheStrategy) {
+        case 'none':
+          return this.ruleFunction(source, args, context, info);
+        case 'contextual':
+          return this.resolveFromCache(this.name)(source, args, context, info);
+        case 'strict':
+          return this.resolveFromCache(
+            `${this.name}-${this.hash(args, source)}`
+          )(source, args, context, info);
+      }
+    } catch (error) {
+      return false;
     }
   }
 

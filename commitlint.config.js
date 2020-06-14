@@ -1,4 +1,4 @@
-exports.default = {
+module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
     'type-enum': [
@@ -16,6 +16,7 @@ exports.default = {
         'revert',
         'style',
         'test',
+        'tools',
       ],
     ],
   },
