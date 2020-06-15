@@ -19,7 +19,7 @@ import { authenticated } from './../../app.authorization';
 import {
   Create<%= className %>Input,
   Update<%= className %>Input,
-} from './test-resource.input';
+} from './<%= fileName %>.input';
 import { <%= className %> } from './<%= fileName %>.entity';
 import { <%= className %>Loader}  from './<%= fileName %>.loader';
 
