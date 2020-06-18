@@ -8,7 +8,7 @@ export function Authorized<
   TSource = unknown,
   TArgs = unknown
 >(
-  rule: Rule<TContext, TSource, TArgs> | LogicRule<TContext, TSource, TArgs>
+  rule: Rule<TContext, TSource, TArgs> | LogicRule<TSource, TArgs, TContext>
 ): <TFunction extends () => void, Y>(
   target: any,
   propertyKey?: string | symbol,

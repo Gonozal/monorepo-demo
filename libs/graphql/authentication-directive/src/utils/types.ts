@@ -2,7 +2,7 @@ import { Rule, LogicRule } from '../lib/rule';
 import { GraphQLResolveInfo, GraphQLField, GraphQLObjectType } from 'graphql';
 export type preResolveRule = () => () => boolean;
 
-export type RuleFunction<TContext, TSource, TArgs> = (
+export type RuleFunction<TSource, TArgs, TContext> = (
   source: TSource,
   args: TArgs,
   context: TContext,

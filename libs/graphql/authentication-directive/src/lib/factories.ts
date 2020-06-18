@@ -7,8 +7,8 @@ import { RuleArgs, RuleFunction } from '../utils/types';
 export const rule = <TSource = unknown, TArgs = unknown, TContext = unknown>(
   args?: RuleArgs
 ) => (
-  func: RuleFunction<TContext, TSource, TArgs>
-): Rule<TContext, TSource, TArgs> => {
+  func: RuleFunction<TSource, TArgs, TContext>
+): Rule<TSource, TArgs, TContext> => {
   const id = args?.name || uuidV4();
   const cacheStrategy = args?.cacheStrategy || 'contextual';
   const rule = new Rule(id, cacheStrategy, func);
@@ -17,28 +17,28 @@ export const rule = <TSource = unknown, TArgs = unknown, TContext = unknown>(
 };
 
 export const and = <TSource = unknown, TArgs = unknown, TContext = unknown>(
-  ...rules: Rule<TContext, TSource, TArgs>[]
-): And<TContext, TSource, TArgs> => {
+  ...rules: Rule<TSource, TArgs, TContext>[]
+): And<TSource, TArgs, TContext> => {
   const id = uuidV4();
-  const rule = new And<TContext, TSource, TArgs>(id, ...rules);
+  const rule = new And<TSource, TArgs, TContext>(id, ...rules);
   Store.addRule(rule.name, rule);
   return rule;
 };
 
 export const or = <TSource = unknown, TArgs = unknown, TContext = unknown>(
-  ...rules: Rule<TContext, TSource, TArgs>[]
-): Or<TContext, TSource, TArgs> => {
+  ...rules: Rule<TSource, TArgs, TContext>[]
+): Or<TSource, TArgs, TContext> => {
   const id = uuidV4();
-  const rule = new Or<TContext, TSource, TArgs>(id, ...rules);
+  const rule = new Or<TSource, TArgs, TContext>(id, ...rules);
   Store.addRule(rule.name, rule);
   return rule;
 };
 
 export const none = <TSource = unknown, TArgs = unknown, TContext = unknown>(
-  ...rules: Rule<TContext, TSource, TArgs>[]
-): None<TContext, TSource, TArgs> => {
+  ...rules: Rule<TSource, TArgs, TContext>[]
+): None<TSource, TArgs, TContext> => {
   const id = uuidV4();
-  const rule = new None<TContext, TSource, TArgs>(id, ...rules);
+  const rule = new None<TSource, TArgs, TContext>(id, ...rules);
   Store.addRule(rule.name, rule);
   return rule;
 };

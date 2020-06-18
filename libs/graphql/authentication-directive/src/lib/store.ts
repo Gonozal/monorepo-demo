@@ -15,9 +15,6 @@ export class Store {
   }
 
   static addRule(id: string, rule: StorableRule): void {
-    if (this.rules[id]) {
-      throw new DuplicateRuleError(id);
-    }
     this.rules[id] = rule;
   }
 }

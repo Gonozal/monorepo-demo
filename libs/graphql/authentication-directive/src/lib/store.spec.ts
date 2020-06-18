@@ -23,11 +23,6 @@ describe('rule-store', () => {
     expect(Store.getRule(r1.name)).toBe(r1);
   });
 
-  it('throws DuplicateRuleError when storing rules with duplicate names', () => {
-    Store.addRule(r1.name, r1);
-    expect(() => Store.addRule(r1.name, r2)).toThrowError(DuplicateRuleError);
-  });
-
   it('throws RuleNotFoundError when retrieving a wrong rule name', () => {
     expect(() => Store.getRule(r1.name)).toThrowError(RuleNotFoundError);
   });

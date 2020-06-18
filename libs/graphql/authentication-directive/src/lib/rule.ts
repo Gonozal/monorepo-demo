@@ -3,7 +3,7 @@ import { CacheStrategy, RuleFunction } from '../utils/types';
 import { GraphQLResolveInfo } from 'graphql';
 import * as hashFunction from 'object-hash';
 
-abstract class Resolvable<TContext, TSource, TArgs> {
+abstract class Resolvable<TSource, TArgs, TContext> {
   abstract async resolve(
     source: TSource,
     args: TArgs,
@@ -12,31 +12,31 @@ abstract class Resolvable<TContext, TSource, TArgs> {
   ): Promise<boolean>;
 }
 
-export abstract class LogicRule<TContext, TSource, TArgs> extends Resolvable<
-  TContext,
+export abstract class LogicRule<TSource, TArgs, TContext> extends Resolvable<
   TSource,
-  TArgs
+  TArgs,
+  TContext
 > {
-  protected rules: Resolvable<TContext, TSource, TArgs>[];
+  protected rules: Resolvable<TSource, TArgs, TContext>[];
 
   constructor(
     public name: string,
-    ...rules: Resolvable<TContext, TSource, TArgs>[]
+    ...rules: Resolvable<TSource, TArgs, TContext>[]
   ) {
     super();
     this.rules = rules;
   }
 }
 
-export class Rule<TContext, TSource, TArgs> extends Resolvable<
-  TContext,
+export class Rule<TSource, TArgs, TContext> extends Resolvable<
   TSource,
-  TArgs
+  TArgs,
+  TContext
 > {
   public constructor(
     public name: string,
     public cacheStrategy: CacheStrategy,
-    public ruleFunction: RuleFunction<TContext, TSource, TArgs>
+    public ruleFunction: RuleFunction<TSource, TArgs, TContext>
   ) {
     super();
   }
@@ -98,10 +98,10 @@ export class Rule<TContext, TSource, TArgs> extends Resolvable<
   }
 }
 
-export class And<TContext, TSource, TArgs> extends LogicRule<
-  TContext,
+export class And<TSource, TArgs, TContext> extends LogicRule<
   TSource,
-  TArgs
+  TArgs,
+  TContext
 > {
   public async resolve(
     source: TSource,
@@ -116,10 +116,10 @@ export class And<TContext, TSource, TArgs> extends LogicRule<
   }
 }
 
-export class Or<TContext, TSource, TArgs> extends LogicRule<
-  TContext,
+export class Or<TSource, TArgs, TContext> extends LogicRule<
   TSource,
-  TArgs
+  TArgs,
+  TContext
 > {
   public async resolve(
     source: TSource,
@@ -134,10 +134,10 @@ export class Or<TContext, TSource, TArgs> extends LogicRule<
   }
 }
 
-export class None<TContext, TSource, TArgs> extends LogicRule<
-  TContext,
+export class None<TSource, TArgs, TContext> extends LogicRule<
   TSource,
-  TArgs
+  TArgs,
+  TContext
 > {
   public async resolve(
     source: TSource,
