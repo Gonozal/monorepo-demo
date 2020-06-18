@@ -1,17 +1,12 @@
+import { Context } from './../types/context';
 import * as jwt from 'jsonwebtoken';
+import { getRepository } from 'typeorm';
 
 import { User } from '../app/user/user.entity';
-import { getDataLoader } from '@monorepo/graphql/dataloader';
 
-export interface Context {
-  [key: string]: any;
-  user?: User;
-}
-
-export const gqlContext = async (params: any) => {
+export const gqlContext = async ({ req }: { req: any }): Promise<Context> => {
   const context: Context = {};
-  const req = params.req;
-  const userLoader = getDataLoader(context, User);
+  const userRepository = getRepository(User);
 
   let userId: string | undefined = undefined;
   if (
@@ -27,11 +22,14 @@ export const gqlContext = async (params: any) => {
 
   const user =
     userId &&
-    (await userLoader.load({
+    (await userRepository.findOne({
       where: { id: userId },
+      relations: ['userGroup', 'disabledRoles', 'userGroup.userGroupRoles'],
     }));
-  if (!user || !user[0]) return context;
-  context.user = user[0];
+  if (!user) return context;
+  user.roles = [];
+  context.user = user as Context['user'];
 
+  console.log(context);
   return context;
 };
