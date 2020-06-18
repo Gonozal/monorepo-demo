@@ -1,5 +1,6 @@
+import { UserGroupRole } from './../user-group-role/user-group-role.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, HideField } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -62,9 +63,13 @@ export class UserGroup extends AppEntity {
   // })
   // public scenarioCategories?: ScenarioCategory[];
 
-  @Field(() => [User])
+  @HideField()
   @OneToMany(() => User, (user) => user.userGroup)
   public users?: User[];
+
+  @HideField()
+  @OneToMany(() => UserGroupRole, (userGroupRole) => userGroupRole.userGroup)
+  public userGroupRoles?: UserGroupRole[];
 
   @Field(() => Date)
   @CreateDateColumn()

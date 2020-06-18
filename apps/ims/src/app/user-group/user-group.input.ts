@@ -1,6 +1,4 @@
 import { InputType, PartialType } from '@nestjs/graphql';
-import { ValidateNested } from 'class-validator';
-import { RoleInput } from '../role/dto/role.input';
 
 @InputType()
 export class CreateUserGroupInput {
@@ -16,4 +14,9 @@ export class CreateUserGroupInput {
 export class UpdateUserGroupInput extends PartialType(CreateUserGroupInput) {
   // @ValidateNested()
   // public roles?: RoleInput[];
+}
+
+@InputType()
+export class ToggleUserGroupInput {
+  public active!: boolean;
 }

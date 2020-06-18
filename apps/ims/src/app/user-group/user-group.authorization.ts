@@ -1,6 +1,6 @@
 import { rule } from '@monorepo/graphql/authentication-directive';
 
-import { Context } from './../../common/context';
+import { Context } from './../../types/context';
 import { UpdateUserGroupInput } from './user-group.input';
 import { UserGroup } from './user-group.entity';
 

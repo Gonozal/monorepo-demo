@@ -5,6 +5,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './app/user/user.module';
 import { UserGroupModule } from './app/user-group/user-group.module';
+import { RoleModule } from './app/role/role.module';
+import { UserGroupRoleModule } from './app/user-group-role/user-group-role.module';
+import { UserRoleModule } from './app/user-role/user-role.module';
 
 @Module({
   imports: [
@@ -41,6 +44,12 @@ import { UserGroupModule } from './app/user-group/user-group.module';
         },
       },
     }),
+
+    RoleModule,
+
+    UserGroupRoleModule,
+
+    UserRoleModule,
   ],
 })
 export class AppModule {}

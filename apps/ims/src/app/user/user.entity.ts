@@ -6,11 +6,14 @@ import {
   Entity,
   ManyToOne,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
 import { UserGroup } from '../user-group/user-group.entity';
+import { Role } from '../role/role.entity';
+import { UserRole } from '../user-role/user-role.entity';
 
 @Entity()
 @ObjectType()
@@ -86,9 +89,16 @@ export class User extends AppEntity {
   @Column('uuid')
   public userGroupId!: string;
 
-  @Field(() => UserGroup)
+  @HideField()
   @ManyToOne(() => UserGroup, (userGroup) => userGroup.users)
   public userGroup?: UserGroup;
+
+  @HideField()
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  public disabledRoles?: UserRole[];
+
+  @HideField()
+  public roles?: Role[];
 
   @Field(() => Date)
   @CreateDateColumn()
@@ -104,6 +114,6 @@ export class User extends AppEntity {
 
   public context?: Context;
 
-  public roles?: Role[];
+
   */
 }
