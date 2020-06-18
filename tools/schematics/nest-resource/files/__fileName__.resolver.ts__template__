@@ -60,7 +60,7 @@ export class <%= className %>Resolver {
     @Args('id') id: string,
     @Args('data') input: Update<%= className %>Input
   ): Promise<<%= className %>> {
-    const <%= attributeName %> = await this.<%= attributeName %>Repository.findOneOrFail(input);
+    const <%= attributeName %> = await this.<%= attributeName %>Repository.findOneOrFail(id);
     this.<%= attributeName %>Repository.merge(<%= attributeName %>, input);
     return this.<%= attributeName %>Repository.save(<%= attributeName %>);
   }

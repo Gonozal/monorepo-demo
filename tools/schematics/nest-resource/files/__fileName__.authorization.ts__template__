@@ -1,6 +1,6 @@
 import { rule } from '@monorepo/graphql/authentication-directive';
 
-import { Context } from './../../common/context';
+import { Context } from './../../types/context';
 
 import { Update<%= className %>Input } from './<%= fileName %>.input';
 import { <%= className %> } from './<%= fileName %>.entity';
