@@ -22,7 +22,8 @@
       "@monorepo/graphql/authentication-directive": [
         "libs/graphql/authentication-directive/src/index.ts"
       ],
-      "@monorepo/graphql/dataloader": ["libs/graphql/dataloader/src/index.ts"]
+      "@monorepo/graphql/dataloader": ["libs/graphql/dataloader/src/index.ts"],
+      "@monorepo/graphql/pagination": ["libs/graphql/pagination/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

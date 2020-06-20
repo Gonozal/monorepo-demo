@@ -117,6 +117,33 @@
           }
         }
       }
+    },
+    "graphql-pagination": {
+      "root": "libs/graphql/pagination",
+      "sourceRoot": "libs/graphql/pagination/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/graphql/pagination/tsconfig.lib.json",
+              "libs/graphql/pagination/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/graphql/pagination/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/graphql/pagination/jest.config.js",
+            "tsConfig": "libs/graphql/pagination/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

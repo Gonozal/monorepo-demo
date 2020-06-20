@@ -1,16 +1,10 @@
+import { InputType, Field } from '@nestjs/graphql';
+import { Min, IsInt } from 'class-validator';
 import { AscDesc } from './../utils/types';
-import { InputType, Field, registerEnumType } from '@nestjs/graphql';
-
-registerEnumType(AscDesc, {
-  name: 'AscDesc',
-  description: 'SQL Sort Direction',
-});
 
 export const paginationDefaults: PaginationInput = {
   orderByField: 'createdAt',
   orderByDirection: AscDesc.DESC,
-  limit: 50,
-  offset: 0,
 };
 
 @InputType()
@@ -21,9 +15,19 @@ export class PaginationInput {
   @Field(() => AscDesc, { defaultValue: paginationDefaults.orderByDirection })
   public orderByDirection!: AscDesc;
 
-  @Field({ defaultValue: paginationDefaults.limit })
-  public limit!: number;
+  @IsInt()
+  @Min(0)
+  @Field(() => Number, { nullable: true })
+  public first?: number;
 
-  @Field({ defaultValue: paginationDefaults.offset })
-  public offset!: number;
+  @Field(() => String, { nullable: true })
+  public after?: string;
+
+  @IsInt()
+  @Min(0)
+  @Field(() => Number, { nullable: true })
+  public last?: number;
+
+  @Field(() => String, { nullable: true })
+  public before?: string;
 }
