@@ -1,3 +1,10 @@
+import {
+  paginationDefaults,
+  PaginationInput,
+  typeormPaginationBuilder,
+  recordsToConnection,
+  Connection,
+} from '@monorepo/graphql/pagination';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 import { DataLoaderType } from '@monorepo/graphql/dataloader';
 import { PaginationArgs, PaginationData } from '@monorepo/graphql/pagination';
@@ -19,7 +26,7 @@ import { Repository } from 'typeorm';
 import { authenticated } from './../../app.authorization';
 import { UserGroup } from '../user-group/user-group.entity';
 import { UserGroupLoader } from '../user-group/user-group.loader';
-import { User } from './user.entity';
+import { User, UserConnection } from './user.entity';
 import { CreateUserInput, UpdateUserInput } from './user.input';
 import { UserLoader } from './user.loader';
 import { hasRole } from '../role/role.authorization';
@@ -32,10 +39,20 @@ export class UserResolver {
 
   @Authorized(hasRole('users.users'))
   @Query(() => [User])
-  public async getUsers(
-    @PaginationArgs() pagination: PaginationData
-  ): Promise<User[]> {
+  public async getUsers(): Promise<User[]> {
     return this.userRepository.find();
+  }
+
+  // @Authorized(hasRole('users.users'))
+  @Query(() => UserConnection)
+  public async getUserConnection(
+    @PaginationArgs() paginationInput: PaginationInput
+  ): Promise<Connection<User>> {
+    const paginationOptions = typeormPaginationBuilder(paginationInput);
+    const [records, totalCount] = await this.userRepository.findAndCount(
+      paginationOptions
+    );
+    return recordsToConnection(records, totalCount, paginationOptions);
   }
 
   @Authorized(authenticated)

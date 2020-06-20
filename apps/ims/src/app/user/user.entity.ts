@@ -14,6 +14,7 @@ import { AppEntity } from '../../app.abstract.entity';
 import { UserGroup } from '../user-group/user-group.entity';
 import { Role } from '../role/role.entity';
 import { UserRole } from '../user-role/user-role.entity';
+import { Paginated } from '@monorepo/graphql/pagination';
 
 @Entity()
 @ObjectType()
@@ -117,3 +118,6 @@ export class User extends AppEntity {
 
   */
 }
+
+@ObjectType()
+export class UserConnection extends Paginated(User) {}
