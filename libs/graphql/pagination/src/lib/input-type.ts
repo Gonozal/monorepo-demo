@@ -5,6 +5,7 @@ import { AscDesc } from './../utils/types';
 export const paginationDefaults: PaginationInput = {
   orderByField: 'createdAt',
   orderByDirection: AscDesc.DESC,
+  first: 20,
 };
 
 @InputType()
