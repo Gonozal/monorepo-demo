@@ -4,8 +4,8 @@ import { getRepository } from 'typeorm';
 
 import { User } from '../app/user/user.entity';
 
-export const gqlContext = async ({ req }: { req: any }): Promise<Context> => {
-  const context: Context = {};
+export const gqlContext = async (ctx: any): Promise<Context> => {
+  const req = ctx.req;
   const userRepository = getRepository(User);
 
   let userId: string | undefined = undefined;
@@ -26,10 +26,10 @@ export const gqlContext = async ({ req }: { req: any }): Promise<Context> => {
       where: { id: userId },
       relations: ['userGroup', 'disabledRoles', 'userGroup.userGroupRoles'],
     }));
-  if (!user) return context;
-  user.roles = [];
-  context.user = user as Context['user'];
 
-  console.log(context);
-  return context;
+  if (!user) return ctx;
+
+  ctx.user = user as Context['user'];
+
+  return ctx;
 };

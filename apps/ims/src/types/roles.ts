@@ -132,3 +132,13 @@ export interface RoleInterface {
 export type RoleIndex = {
   [key in RoleId]: Role;
 };
+
+export interface UserGroupRoleInterface {
+  roleId: RoleId;
+  userGroupId: string;
+}
+
+export interface UserRoleInterface {
+  roleId: RoleId;
+  userId: string;
+}

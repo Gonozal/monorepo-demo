@@ -1,6 +1,8 @@
-import { UserGroupRole } from './../user-group-role/user-group-role.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
-import { ObjectType, Field, HideField } from '@nestjs/graphql';
+
+import { UserGroupRole } from './user-group-role/user-group-role.entity';
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { ObjectType, HideField } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -21,9 +23,11 @@ export class UserGroup extends AppEntity {
   public name!: string;
 
   @Column({ default: false })
+  @FilterableField()
   public isServiceProvider!: boolean;
 
   @Column({ default: false })
+  @FilterableField()
   public isLocationDependent!: boolean;
 
   @Column({ default: false })
@@ -33,6 +37,7 @@ export class UserGroup extends AppEntity {
   public description?: string;
 
   @Column({ nullable: false, default: true })
+  @FilterableField()
   public active!: boolean;
 
   // @BelongsToMany(() => TaskTemplate, {
@@ -71,11 +76,11 @@ export class UserGroup extends AppEntity {
   @OneToMany(() => UserGroupRole, (userGroupRole) => userGroupRole.userGroup)
   public userGroupRoles?: UserGroupRole[];
 
-  @Field(() => Date)
+  @FilterableField(() => Date)
   @CreateDateColumn()
   public createdAt!: Date;
 
-  @Field(() => Date)
+  @FilterableField(() => Date)
   @UpdateDateColumn()
   public updatedAt!: Date;
 

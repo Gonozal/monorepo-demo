@@ -1,106 +1,67 @@
-import {
-  paginationDefaults,
-  PaginationInput,
-  typeormPaginationBuilder,
-  recordsToConnection,
-  Connection,
-} from '@monorepo/graphql/pagination';
+import { UserGroup } from './../user-group/user-group.entity';
+import { RoleId } from './../../types/roles';
+import { JoinTableRelationInput } from './../../app.input';
+import { UserRole } from './user-role/user-role.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
-import { DataLoaderType } from '@monorepo/graphql/dataloader';
-import { PaginationArgs, PaginationData } from '@monorepo/graphql/pagination';
-
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import DataLoader from 'dataloader';
-import { Loader } from 'nestjs-dataloader';
-import { Repository } from 'typeorm';
-
-import { authenticated } from './../../app.authorization';
-import { UserGroup } from '../user-group/user-group.entity';
-import { UserGroupLoader } from '../user-group/user-group.loader';
-import { User, UserConnection } from './user.entity';
-import { CreateUserInput, UpdateUserInput } from './user.input';
-import { UserLoader } from './user.loader';
 import { hasRole } from '../role/role.authorization';
+import { authenticated } from './../../app.authorization';
+import { User } from './user.entity';
+
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
+import { Resolver, Args, Mutation } from '@nestjs/graphql';
+import { getRepository } from 'typeorm';
 
 @Resolver(() => User)
-export class UserResolver {
+export class UserResolver extends CRUDResolver(User, {
+  read: {
+    many: {
+      decorators: [Authorized(hasRole('users.users.index'))],
+    },
+    one: {
+      decorators: [Authorized(authenticated)],
+    },
+  },
+  create: { decorators: [Authorized(hasRole('users.users.create'))] },
+  update: { decorators: [Authorized(hasRole('users.users.edit'))] },
+  delete: { decorators: [Authorized(hasRole('users.users.delete'))] },
+  relations: {
+    many: {
+      userRoles: {
+        DTO: UserRole,
+        decorators: [Authorized(hasRole('users.users.edit'))],
+        pagingStrategy: PagingStrategies.NONE,
+        disableRemove: true,
+        disableUpdate: true,
+      },
+    },
+    one: {
+      userGroup: { DTO: UserGroup },
+    },
+  },
+}) {
   constructor(
-    @InjectRepository(User) public readonly userRepository: Repository<User>
-  ) {}
-
-  @Authorized(hasRole('users.users'))
-  @Query(() => [User])
-  public async getUsers(): Promise<User[]> {
-    return this.userRepository.find();
+    @InjectQueryService(User)
+    readonly service: QueryService<User>
+  ) {
+    super(service);
   }
 
-  // @Authorized(hasRole('users.users'))
-  @Query(() => UserConnection)
-  public async getUserConnection(
-    @PaginationArgs() paginationInput: PaginationInput
-  ): Promise<Connection<User>> {
-    const paginationOptions = typeormPaginationBuilder(paginationInput);
-    const [records, totalCount] = await this.userRepository.findAndCount(
-      paginationOptions
-    );
-    return recordsToConnection(records, totalCount, paginationOptions);
-  }
-
-  @Authorized(authenticated)
-  @Query(() => User, { nullable: true })
-  public async getUser(
-    @Args('id') id: string,
-    @Loader(UserLoader.name)
-    userLoader: DataLoader<string, User>
-  ): Promise<User> {
-    return userLoader.load(id);
-  }
-
-  @Authorized(hasRole('users.users.create'))
-  @Mutation(() => User)
-  public async createUser(@Args('data') input: CreateUserInput): Promise<User> {
-    const user = this.userRepository.create(input);
-    return this.userRepository.save(user);
-  }
-
-  @Authorized(hasRole('users.users.edit'))
-  @Mutation(() => User)
-  public async updateUser(
-    @Args('id') id: string,
-    @Args('data') input: UpdateUserInput
-  ): Promise<User> {
-    const user = await this.userRepository.findOneOrFail(id);
-    this.userRepository.merge(user, input);
-    return this.userRepository.save(user);
-  }
-
-  @Authorized(hasRole('users.users.edit'))
-  @Mutation(() => Boolean)
-  public async deleteUser(@Args('id') id: string): Promise<boolean> {
-    const user = await this.userRepository.findOneOrFail(id);
-    const result = await this.userRepository.delete(user);
-    return Boolean(result.affected && result.affected > 0);
-  }
-
-  @Authorized(authenticated)
-  @ResolveField(() => UserGroup)
-  public async userGroup(
-    @Parent() parent: User,
-    @Loader(UserGroupLoader.name)
-    userGroupLoader: DataLoaderType<UserGroup>
+  @Mutation(() => UserGroup)
+  async setUserRoles(
+    @Args('input') input: JoinTableRelationInput
   ): Promise<UserGroup> {
-    const userGroups = await userGroupLoader.load({
-      where: { id: parent.userGroupId },
+    const repository = getRepository(UserRole);
+    const userRepository = getRepository(UserGroup);
+    await repository.delete({ userId: input.id });
+    const roles = input.relationIds.map((id) => {
+      const role = new UserRole();
+      role.roleId = id as RoleId;
+      role.userId = input.id;
+      return role;
     });
-    return userGroups[0];
+    await repository.save(roles);
+
+    return userRepository.findOneOrFail(input.id);
   }
 }

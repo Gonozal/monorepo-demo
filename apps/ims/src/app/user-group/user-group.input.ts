@@ -1,22 +1,14 @@
-import { InputType, PartialType } from '@nestjs/graphql';
+import { InputType, Field, ID } from '@nestjs/graphql';
 
 @InputType()
-export class CreateUserGroupInput {
+export class CreateUserGroupWithRelations {
   public name!: string;
-  public active!: boolean;
   public isServiceProvider!: boolean;
   public isLocationDependent!: boolean;
   public isControlCenter!: boolean;
   public description?: string;
-}
-
-@InputType()
-export class UpdateUserGroupInput extends PartialType(CreateUserGroupInput) {
-  // @ValidateNested()
-  // public roles?: RoleInput[];
-}
-
-@InputType()
-export class ToggleUserGroupInput {
   public active!: boolean;
+
+  @Field(() => [ID])
+  public roles!: string[];
 }

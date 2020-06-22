@@ -8,6 +8,6 @@ export const allow = rule<
   User | undefined,
   UpdateUserInput | undefined,
   Context
->({ cacheStrategy: 'strict' })(async (source, args, context, info) => {
+>({ cacheStrategy: 'strict' })(async () => {
   return true;
 });

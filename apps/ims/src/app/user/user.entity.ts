@@ -1,4 +1,7 @@
+import { RelationNotLoadedError } from './../../common/Errors';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
+
+import { FilterableField } from '@nestjs-query/query-graphql';
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
@@ -13,8 +16,7 @@ import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
 import { UserGroup } from '../user-group/user-group.entity';
 import { Role } from '../role/role.entity';
-import { UserRole } from '../user-role/user-role.entity';
-import { Paginated } from '@monorepo/graphql/pagination';
+import { UserRole } from './user-role/user-role.entity';
 
 @Entity()
 @ObjectType()
@@ -32,9 +34,11 @@ export class User extends AppEntity {
   }
 
   @Column()
+  @FilterableField()
   public email!: string;
 
   @Column({ nullable: true })
+  @FilterableField()
   public roleName?: string;
 
   @Column({ nullable: true })
@@ -99,13 +103,41 @@ export class User extends AppEntity {
   public disabledRoles?: UserRole[];
 
   @HideField()
-  public roles?: Role[];
+  private _roles?: Role[];
 
-  @Field(() => Date)
+  @HideField()
+  public get roles(): Role[] {
+    // use cached value if available
+    if (this._roles) return this._roles;
+    // We need a bunch of attributes/relations loaded to make a decision.
+    if (
+      !this.userGroup ||
+      !this.userGroup.userGroupRoles ||
+      !this.disabledRoles
+    ) {
+      throw new RelationNotLoadedError();
+    }
+
+    // Start with the roles from the user-group as a baseline
+    const roles: Role[] = this.userGroup.userGroupRoles.map(
+      (userGroupRole) => userGroupRole.role
+    );
+
+    this._roles = roles.filter((role) => {
+      // Disable role if any disabled roles match the
+      // current role (the one coming from the group)
+      return !this.disabledRoles?.some(
+        (disabledRole) => disabledRole.roleId === role.id
+      );
+    });
+    return this._roles;
+  }
+
+  @FilterableField(() => Date)
   @CreateDateColumn()
   public createdAt!: Date;
 
-  @Field(() => Date)
+  @FilterableField(() => Date)
   @UpdateDateColumn()
   public updatedAt!: Date;
 
@@ -118,6 +150,3 @@ export class User extends AppEntity {
 
   */
 }
-
-@ObjectType()
-export class UserConnection extends Paginated(User) {}

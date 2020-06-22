@@ -6,13 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './app/user/user.module';
 import { UserGroupModule } from './app/user-group/user-group.module';
 import { RoleModule } from './app/role/role.module';
-import { UserGroupRoleModule } from './app/user-group-role/user-group-role.module';
-import { UserRoleModule } from './app/user-role/user-role.module';
 
 @Module({
   imports: [
-    UserModule,
-    UserGroupModule,
     GraphQLModule.forRoot({
       installSubscriptionHandlers: true,
       autoSchemaFile: `${__dirname}/schema.gql`,
@@ -44,12 +40,9 @@ import { UserRoleModule } from './app/user-role/user-role.module';
         },
       },
     }),
-
+    UserModule,
+    UserGroupModule,
     RoleModule,
-
-    UserGroupRoleModule,
-
-    UserRoleModule,
   ],
 })
 export class AppModule {}

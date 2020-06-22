@@ -1,4 +1,4 @@
-import { RoleId } from './../../types/roles';
+import { RoleId } from '../../../types/roles';
 import { InputType, ID, Field } from '@nestjs/graphql';
 
 @InputType()

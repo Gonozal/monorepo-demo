@@ -1,98 +1,79 @@
+import { CreateUserGroupWithRelations } from './user-group.input';
+import { RoleId } from './../../types/roles';
+import { UserGroupRole } from './user-group-role/user-group-role.entity';
+import { User } from './../user/user.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
-import { DataLoaderType } from '@monorepo/graphql/dataloader';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
-import DataLoader from 'dataloader';
-import { Loader } from 'nestjs-dataloader';
-import { Repository } from 'typeorm';
 import { hasRole } from '../role/role.authorization';
-import { User } from '../user/user.entity';
-import { UserLoader } from '../user/user.loader';
 import { authenticated } from './../../app.authorization';
 import { UserGroup } from './user-group.entity';
-import {
-  CreateUserGroupInput,
-  ToggleUserGroupInput,
-  UpdateUserGroupInput,
-} from './user-group.input';
-import { UserGroupLoader } from './user-group.loader';
+
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
+import { Resolver, Args, Mutation } from '@nestjs/graphql';
+import { getConnection } from 'typeorm';
 
 @Resolver(() => UserGroup)
-export class UserGroupResolver {
+export class UserGroupResolver extends CRUDResolver(UserGroup, {
+  read: {
+    one: {
+      decorators: [Authorized(authenticated)],
+    },
+    many: {
+      decorators: [Authorized(hasRole('admin.userGroups'))],
+    },
+  },
+  create: { decorators: [Authorized(hasRole('admin.userGroups.create'))] },
+  update: { decorators: [Authorized(hasRole('admin.userGroups.edit'))] },
+  delete: { decorators: [Authorized(hasRole('admin.userGroups.delete'))] },
+  relations: {
+    many: {
+      users: {
+        DTO: User,
+        decorators: [Authorized(hasRole('users.users.index'))],
+      },
+      userGroupRoles: {
+        DTO: UserGroupRole,
+        decorators: [Authorized(hasRole('admin.userGroups'))],
+        pagingStrategy: PagingStrategies.NONE,
+        disableRemove: true,
+        disableUpdate: true,
+      },
+    },
+  },
+}) {
   constructor(
-    @InjectRepository(UserGroup)
-    public readonly userGroupRepository: Repository<UserGroup>
-  ) {}
-
-  @Authorized(hasRole('admin.userGroups'))
-  @Query(() => [UserGroup])
-  public async getUserGroups(): Promise<UserGroup[]> {
-    return this.userGroupRepository.find();
+    @InjectQueryService(UserGroup)
+    readonly service: QueryService<UserGroup>
+  ) {
+    super(service);
   }
 
-  @Authorized(authenticated)
-  @Query(() => UserGroup, { nullable: true })
-  public async getUserGroup(
-    @Args('id') id: string,
-    @Loader(UserGroupLoader.name)
-    userGroupLoader: DataLoader<string, UserGroup>
-  ): Promise<UserGroup> {
-    return userGroupLoader.load(id);
-  }
-
-  @Authorized(hasRole('admin.userGroups.create'))
   @Mutation(() => UserGroup)
-  public async createUserGroup(
-    @Args('data') input: CreateUserGroupInput
+  async createOneUserGroupWithRelation(
+    @Args('input') input: CreateUserGroupWithRelations
   ): Promise<UserGroup> {
-    const userGroup = this.userGroupRepository.create(input);
-    return this.userGroupRepository.save(userGroup);
-  }
+    // Wrap everything in a transaction
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      // save user-group first (we need the generated ID)
+      const userGroup = await queryRunner.manager.save(UserGroup, {
+        ...input,
+        roles: undefined,
+        id: UserGroup.generateId(),
+      }); // fix auto-generated types
 
-  @Authorized(hasRole('admin.userGroups.edit'))
-  @Mutation(() => UserGroup)
-  public async updateUserGroup(
-    @Args('id') id: string,
-    @Args('data') input: UpdateUserGroupInput
-  ): Promise<UserGroup> {
-    const userGroup = await this.userGroupRepository.findOneOrFail(id);
-    this.userGroupRepository.merge(userGroup, input);
-    return this.userGroupRepository.save(userGroup);
-  }
-
-  @Authorized(hasRole('admin.userGroups.toggleActive'))
-  @Mutation(() => UserGroup)
-  public async toggleUserGroup(
-    @Args('id') id: string,
-    @Args('data') input: ToggleUserGroupInput
-  ): Promise<UserGroup> {
-    const userGroup = await this.userGroupRepository.findOneOrFail(id);
-    this.userGroupRepository.merge(userGroup, input);
-    return this.userGroupRepository.save(userGroup);
-  }
-
-  @Authorized(hasRole('admin.userGroups.delete'))
-  @Mutation(() => Boolean)
-  public async deleteUserGroup(@Args('id') id: string): Promise<boolean> {
-    const userGroup = await this.userGroupRepository.findOneOrFail(id);
-    const result = await this.userGroupRepository.delete(userGroup);
-    return Boolean(result.affected && result.affected > 0);
-  }
-
-  @Authorized(hasRole('users.users'))
-  @ResolveField(() => [User])
-  public async users(
-    @Parent() parent: UserGroup,
-    @Loader(UserLoader.name)
-    userLoader: DataLoaderType<User>
-  ): Promise<User[]> {
-    return userLoader.load({ where: { userGroupId: parent.id } });
+      // insert roles second
+      await queryRunner.manager.insert(
+        UserGroupRole,
+        UserGroupRole.fromRoleIds(input.roles as RoleId[], userGroup.id)
+      );
+      // commit transaction if everything went well
+      await queryRunner.commitTransaction();
+      return queryRunner.manager.findOneOrFail(UserGroup, userGroup.id);
+    } catch (error) {
+      queryRunner.rollbackTransaction();
+      throw error;
+    }
   }
 }
