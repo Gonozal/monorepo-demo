@@ -10,7 +10,8 @@ import { UserGroup } from './user-group.entity';
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
-import { getConnection } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
+import { JoinTableRelationInput } from '../../app.input';
 
 @Resolver(() => UserGroup)
 export class UserGroupResolver extends CRUDResolver(UserGroup, {
@@ -75,5 +76,22 @@ export class UserGroupResolver extends CRUDResolver(UserGroup, {
       queryRunner.rollbackTransaction();
       throw error;
     }
+  }
+
+  @Mutation(() => UserGroup)
+  async setUserGroupRolesOnUserGroup(
+    @Args('input') input: JoinTableRelationInput
+  ): Promise<UserGroup> {
+    const repository = getRepository(UserGroupRole);
+    const userGroupRepository = getRepository(UserGroup);
+
+    const userGroup = await userGroupRepository.findOneOrFail(input.id);
+    await repository.delete({ userGroupId: input.id });
+    await repository.insert(
+      input.relationIds.map((roleId) => {
+        return { roleId: roleId as RoleId, userGroupId: input.id };
+      })
+    );
+    return userGroup;
   }
 }

@@ -1,4 +1,5 @@
-import { PrimaryColumn } from 'typeorm';
+import { FilterableField } from '@nestjs-query/query-graphql';
+import { PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -11,4 +12,12 @@ export abstract class AppEntity {
   @PrimaryColumn('uuid')
   @Field(() => ID)
   id: string = uuidV4();
+
+  @FilterableField(() => Date)
+  @CreateDateColumn()
+  public createdAt!: Date;
+
+  @FilterableField(() => Date)
+  @UpdateDateColumn()
+  public updatedAt!: Date;
 }

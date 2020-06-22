@@ -47,21 +47,20 @@ export class UserResolver extends CRUDResolver(User, {
     super(service);
   }
 
-  @Mutation(() => UserGroup)
-  async setUserRoles(
+  @Mutation(() => User)
+  async setUserRolesOnUser(
     @Args('input') input: JoinTableRelationInput
-  ): Promise<UserGroup> {
+  ): Promise<User> {
     const repository = getRepository(UserRole);
-    const userRepository = getRepository(UserGroup);
-    await repository.delete({ userId: input.id });
-    const roles = input.relationIds.map((id) => {
-      const role = new UserRole();
-      role.roleId = id as RoleId;
-      role.userId = input.id;
-      return role;
-    });
-    await repository.save(roles);
+    const userRepository = getRepository(User);
 
-    return userRepository.findOneOrFail(input.id);
+    const user = await userRepository.findOneOrFail(input.id);
+    await repository.delete({ userId: input.id });
+    await repository.insert(
+      input.relationIds.map((roleId) => {
+        return { roleId: roleId as RoleId, userId: input.id };
+      })
+    );
+    return user;
   }
 }

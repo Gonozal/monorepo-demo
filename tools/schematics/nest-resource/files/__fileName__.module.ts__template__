@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
+import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { APP_INTERCEPTOR } from '@nestjs/core/constants';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataLoaderInterceptor } from 'nestjs-dataloader';
 import { <%= className %> } from './<%= fileName %>.entity';
 import { <%= className %>Loader } from './<%= fileName %>.loader';
@@ -8,7 +8,7 @@ import { <%= className %>Resolver } from './<%= fileName %>.resolver';
 import { <%= className %>Subscriber } from './<%= fileName %>.subscriber';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([<%= className %>])],
+  imports: [NestjsQueryTypeOrmModule.forFeature([<%= className %>])],
   providers: [
     <%= className %>Resolver,
     <%= className %>Loader,

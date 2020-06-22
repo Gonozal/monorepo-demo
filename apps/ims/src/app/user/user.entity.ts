@@ -3,14 +3,7 @@ import { Authorized } from '@monorepo/graphql/authentication-directive';
 
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  UpdateDateColumn,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
@@ -132,14 +125,6 @@ export class User extends AppEntity {
     });
     return this._roles;
   }
-
-  @FilterableField(() => Date)
-  @CreateDateColumn()
-  public createdAt!: Date;
-
-  @FilterableField(() => Date)
-  @UpdateDateColumn()
-  public updatedAt!: Date;
 
   /*
   @HasMany(() => UserRole)
