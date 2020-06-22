@@ -30,15 +30,6 @@ import { RoleModule } from './app/role/role.module';
       synchronize: true,
       autoLoadEntities: true,
       logging: ['query'],
-      cache: {
-        type: 'redis',
-        duration: 250,
-        options: {
-          host: process.env.REDIS_HOST,
-          port: parseInt(process.env.REDIS_PORT as string, 10),
-          password: process.env.REDIS_PASSWORD,
-        },
-      },
     }),
     UserModule,
     UserGroupModule,
