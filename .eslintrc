@@ -16,6 +16,10 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "complexity": ["error", 8],
+    "max-lines-per-function": ["error", 40],
+    "max-depth": ["error", 4],
+    "max-lines": ["error", 500],
     "@typescript-eslint/explicit-member-accessibility": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-parameter-properties": "off",
