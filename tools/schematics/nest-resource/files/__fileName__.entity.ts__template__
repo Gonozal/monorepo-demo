@@ -4,10 +4,8 @@ import { FilterableField } from '@nestjs-query/query-graphql';
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
-  UpdateDateColumn,
 } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
@@ -16,12 +14,4 @@ import { AppEntity } from '../../app.abstract.entity';
 @Entity()
 @ObjectType()
 @Authorized(authenticated)
-export class <%= className %> extends AppEntity {
-  @FilterableField(() => Date)
-  @CreateDateColumn()
-  public createdAt!: Date;
-
-  @FilterableField(() => Date)
-  @UpdateDateColumn()
-  public updatedAt!: Date;
-}
+export class <%= className %> extends AppEntity {}
