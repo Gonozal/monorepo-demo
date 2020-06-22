@@ -1,4 +1,6 @@
 import { Authorized } from '@monorepo/graphql/authentication-directive';
+import { FilterableField } from '@nestjs-query/query-graphql';
+
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import {
   Column,
@@ -15,9 +17,11 @@ import { AppEntity } from '../../app.abstract.entity';
 @ObjectType()
 @Authorized(authenticated)
 export class <%= className %> extends AppEntity {
+  @FilterableField(() => Date)
   @CreateDateColumn()
   public createdAt!: Date;
 
+  @FilterableField(() => Date)
   @UpdateDateColumn()
   public updatedAt!: Date;
 }

@@ -1,67 +1,37 @@
 import { Authorized } from '@monorepo/graphql/authentication-directive';
-import { DataLoaderType } from '@monorepo/graphql/dataloader';
 
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  Resolver,
-  ResolveField,
-} from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
+import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
+import { Resolver, Mutation } from '@nestjs/graphql';
 
-import { Repository } from 'typeorm';
-import { Loader } from 'nestjs-dataloader';
-import DataLoader from 'dataloader';
-
+import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
-import {
-  Create<%= className %>Input,
-  Update<%= className %>Input,
-} from './<%= fileName %>.input';
 import { <%= className %> } from './<%= fileName %>.entity';
-import { <%= className %>Loader}  from './<%= fileName %>.loader';
-
-@Resolver(() => <%= className %>)
-export class <%= className %>Resolver {
+@Resolver()
+export class <%= className %>Resolver extends CRUDResolver(<%= className %>, {
+  read: {
+    many: {
+      decorators: [Authorized(authenticated)],
+    },
+    one: {
+      decorators: [Authorized(authenticated)],
+    },
+  },
+  create: { decorators: [Authorized(authenticated)] },
+  update: { decorators: [Authorized(authenticated)] },
+  delete: { decorators: [Authorized(authenticated)] },
+  // Uncomment to define relation field-resolvers
+  /*
+    relations: {
+      many: { },
+      one: {},
+    },
+  */
+}) {
   constructor(
-    @InjectRepository(<%= className %>) public readonly <%= attributeName %>Repository: Repository<<%= className %>>
-  ) {}
-
-  @Authorized(authenticated)
-  @Query(() => [<%= className %>])
-  public async get<%= pluralize(className) %>(): Promise<<%= className %>[]> {
-    return this.<%= attributeName %>Repository.find();
-  }
-
-  @Authorized(authenticated)
-  @Query(() => <%= className %>, { nullable: false })
-  public async get<%= className %>(
-    @Args('id') id: string,
-    @Loader(<%= className %>Loader.name)
-    <%= attributeName %>Loader: DataLoader<string, <%= className %>>
-  ): Promise<<%= className %>> {
-    return <%= attributeName %>Loader.load(id);
-  }
-
-  @Authorized(authenticated)
-  @Mutation(() => <%= className %>)
-  public async create<%= className %>(
-    @Args('data') input: Create<%= className %>Input
-  ): Promise<<%= className %>> {
-    const <%= attributeName %> = this.<%= attributeName %>Repository.create(input);
-    return this.<%= attributeName %>Repository.save(<%= attributeName %>);
-  }
-
-  @Authorized(authenticated)
-  @Mutation(() => <%= className %>)
-  public async update<%= className %>(
-    @Args('id') id: string,
-    @Args('data') input: Update<%= className %>Input
-  ): Promise<<%= className %>> {
-    const <%= attributeName %> = await this.<%= attributeName %>Repository.findOneOrFail(id);
-    this.<%= attributeName %>Repository.merge(<%= attributeName %>, input);
-    return this.<%= attributeName %>Repository.save(<%= attributeName %>);
+    @InjectQueryService(<%= className %>)
+    readonly service: QueryService<<%= className %>>
+  ) {
+    super(service);
   }
 }
