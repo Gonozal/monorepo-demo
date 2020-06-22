@@ -2,7 +2,7 @@ import { Priority } from './../../types/priority';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 import { FilterableField } from '@nestjs-query/query-graphql';
 
-import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -26,9 +26,9 @@ export class TaskTemplate extends AppEntity {
   @Column({ nullable: true })
   public description?: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   @FilterableField(() => Priority)
-  public priority!: string;
+  public priority!: Priority;
 
   @Column()
   public dueTimeOffset!: number;
