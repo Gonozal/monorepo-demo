@@ -1,8 +1,9 @@
+import { Status } from './../status/status.entity';
 import { Priority } from './../../types/priority';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 import { FilterableField } from '@nestjs-query/query-graphql';
 
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType, ID } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -35,6 +36,14 @@ export class TaskTemplate extends AppEntity {
 
   @Column()
   public reminderOffset!: number;
+
+  @Field(() => ID)
+  @Column()
+  public initialStatusId!: string;
+
+  @HideField()
+  @ManyToOne(() => Status, (status) => status.taskTemplates)
+  public initialStatus!: Status;
 
   @HideField()
   @ManyToMany(() => User)

@@ -1,3 +1,4 @@
+import { TaskTemplate } from './../task-template/task-template.entity';
 import { UserGroup } from './../user-group/user-group.entity';
 import { RoleId } from './../../types/roles';
 import { JoinTableRelationInput } from './../../app.input';
@@ -34,9 +35,18 @@ export class UserResolver extends CRUDResolver(User, {
         disableRemove: true,
         disableUpdate: true,
       },
+      taskTemplates: {
+        DTO: TaskTemplate,
+        decorators: [Authorized(hasRole('admin.taskTemplates'))],
+        disableRemove: true,
+        disableUpdate: true,
+      },
     },
     one: {
-      userGroup: { DTO: UserGroup },
+      userGroup: {
+        DTO: UserGroup,
+        decorators: [Authorized(hasRole('users.users'))],
+      },
     },
   },
 }) {

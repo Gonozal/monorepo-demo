@@ -1,3 +1,4 @@
+import { TaskTemplate } from './../task-template/task-template.entity';
 import { CreateUserGroupWithRelations } from './user-group.input';
 import { RoleId } from './../../types/roles';
 import { UserGroupRole } from './user-group-role/user-group-role.entity';
@@ -9,7 +10,7 @@ import { UserGroup } from './user-group.entity';
 
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
-import { Resolver, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Args, Mutation, ID } from '@nestjs/graphql';
 import { getConnection, getRepository } from 'typeorm';
 import { JoinTableRelationInput } from '../../app.input';
 
@@ -36,6 +37,12 @@ export class UserGroupResolver extends CRUDResolver(UserGroup, {
         DTO: UserGroupRole,
         decorators: [Authorized(hasRole('admin.userGroups'))],
         pagingStrategy: PagingStrategies.NONE,
+        disableRemove: true,
+        disableUpdate: true,
+      },
+      taskTemplates: {
+        DTO: TaskTemplate,
+        decorators: [Authorized(hasRole('admin.taskTemplates'))],
         disableRemove: true,
         disableUpdate: true,
       },
@@ -78,6 +85,7 @@ export class UserGroupResolver extends CRUDResolver(UserGroup, {
     }
   }
 
+  @Authorized(hasRole('admin.userGroups.edit'))
   @Mutation(() => UserGroup)
   async setUserGroupRolesOnUserGroup(
     @Args('input') input: JoinTableRelationInput
@@ -93,5 +101,16 @@ export class UserGroupResolver extends CRUDResolver(UserGroup, {
       })
     );
     return userGroup;
+  }
+
+  @Authorized(hasRole('admin.userGroups.toggleActive'))
+  @Mutation(() => UserGroup)
+  async setStatusOnUserGroup(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('active') active: boolean
+  ): Promise<UserGroup> {
+    const userGroupRepository = getRepository(UserGroup);
+    await userGroupRepository.update({ id }, { active });
+    return userGroupRepository.findOneOrFail(id);
   }
 }
