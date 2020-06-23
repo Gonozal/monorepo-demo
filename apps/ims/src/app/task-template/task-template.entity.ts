@@ -4,13 +4,7 @@ import { Authorized } from '@monorepo/graphql/authentication-directive';
 import { FilterableField } from '@nestjs-query/query-graphql';
 
 import { Field, HideField, ObjectType, ID } from '@nestjs/graphql';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  UpdateDateColumn,
-  ManyToMany,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, ManyToMany } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';

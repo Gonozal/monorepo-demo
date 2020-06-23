@@ -4,7 +4,7 @@ import { Authorized } from '@monorepo/graphql/authentication-directive';
 
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
-import { Resolver, Mutation } from '@nestjs/graphql';
+import { Resolver } from '@nestjs/graphql';
 
 import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
@@ -30,12 +30,14 @@ export class TaskTemplateResolver extends CRUDResolver(TaskTemplate, {
         decorators: [Authorized(hasRole('admin.taskTemplates'))],
         disableRemove: true,
         disableUpdate: true,
+        pagingStrategy: PagingStrategies.NONE,
       },
       userGroups: {
         DTO: UserGroup,
         decorators: [Authorized(hasRole('admin.taskTemplates'))],
         disableRemove: true,
         disableUpdate: true,
+        pagingStrategy: PagingStrategies.NONE,
       },
     },
     one: {

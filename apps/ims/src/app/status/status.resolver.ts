@@ -3,7 +3,7 @@ import { Authorized } from '@monorepo/graphql/authentication-directive';
 
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
-import { Resolver, Mutation } from '@nestjs/graphql';
+import { Resolver } from '@nestjs/graphql';
 
 import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
@@ -26,6 +26,7 @@ export class StatusResolver extends CRUDResolver(Status, {
       taskTemplates: {
         DTO: TaskTemplate,
         decorators: [Authorized(hasRole('admin.taskTemplates'))],
+        pagingStrategy: PagingStrategies.NONE,
         disableRemove: true,
         disableUpdate: true,
       },

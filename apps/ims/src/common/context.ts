@@ -3,11 +3,13 @@ import * as jwt from 'jsonwebtoken';
 import { getRepository } from 'typeorm';
 
 import { User } from '../app/user/user.entity';
+import { Request } from 'express';
 
-export const gqlContext = async (ctx: any): Promise<Context> => {
+export const gqlContext = async (ctx: { req: Request }): Promise<Context> => {
   const req = ctx.req;
   const userRepository = getRepository(User);
 
+  const context: Context = {};
   let userId: string | undefined = undefined;
   if (
     req.headers.authorization &&
@@ -27,9 +29,9 @@ export const gqlContext = async (ctx: any): Promise<Context> => {
       relations: ['userGroup', 'disabledRoles', 'userGroup.userGroupRoles'],
     }));
 
-  if (!user) return ctx;
+  if (!user) return context;
 
-  ctx.user = user as Context['user'];
+  context.user = user as Context['user'];
 
-  return ctx;
+  return context;
 };

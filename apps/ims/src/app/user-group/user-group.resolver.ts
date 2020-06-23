@@ -43,6 +43,7 @@ export class UserGroupResolver extends CRUDResolver(UserGroup, {
       taskTemplates: {
         DTO: TaskTemplate,
         decorators: [Authorized(hasRole('admin.taskTemplates'))],
+        pagingStrategy: PagingStrategies.NONE,
         disableRemove: true,
         disableUpdate: true,
       },

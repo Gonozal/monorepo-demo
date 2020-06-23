@@ -5,7 +5,6 @@ import { UserGroup } from './../app/user-group/user-group.entity';
 import { User } from './../app/user/user.entity';
 
 export interface Context {
-  [key: string]: any;
   user?: User & {
     userGroup: UserGroup & { userGroupRoles: UserGroupRole[] };
     roles: Role[];

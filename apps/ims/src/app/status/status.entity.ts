@@ -1,10 +1,9 @@
 import { StatusType } from './../../types/status';
 import { TaskTemplate } from './../task-template/task-template.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
-import { FilterableField } from '@nestjs-query/query-graphql';
 
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
