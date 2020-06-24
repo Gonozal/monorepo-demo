@@ -1,3 +1,4 @@
+import { ScenarioCategoryUserGroupInput } from './../../scenario-category.input';
 import { UserGroup } from './../../../user-group/user-group.entity';
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ScenarioCategory } from './../../scenario-category.entity';
@@ -37,4 +38,18 @@ export class ScenarioCategoryUserGroupPermission {
     (scenarioCategory) => scenarioCategory.userPermissions
   )
   public scenarioCategory?: ScenarioCategory;
+
+  public static fromInput(
+    permissions: ScenarioCategoryUserGroupInput[] | undefined,
+    scenarioCategoryId: string
+  ): ScenarioCategoryUserGroupPermission[] {
+    if (!permissions) return [];
+
+    return permissions.map((permission) => {
+      return {
+        ...permission,
+        scenarioCategoryId,
+      };
+    });
+  }
 }

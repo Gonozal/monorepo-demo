@@ -1,9 +1,10 @@
+import { TaskTemplate } from './../task-template/task-template.entity';
 import { RelationNotLoadedError } from './../../common/Errors';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
@@ -63,12 +64,9 @@ export class User extends AppEntity {
   )
   public scenarioCategoryPermissions?: ScenarioCategoryUserPermission[];
 
-  // @BelongsToMany(() => TaskTemplate, {
-  //   through: () => TaskTemplateAssignment,
-  //   foreignKey: 'assignedToId',
-  //   constraints: false,
-  // })
-  // public taskTemplates?: TaskTemplate[];
+  @HideField()
+  @ManyToMany(() => TaskTemplate, (taskTemplate) => taskTemplate.users)
+  public taskTemplates?: TaskTemplate[];
 
   @Field(() => ID)
   @Column('uuid')

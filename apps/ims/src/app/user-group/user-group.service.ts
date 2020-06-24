@@ -32,13 +32,12 @@ export class UserGroupQueryService extends TypeOrmQueryService<UserGroup> {
     if (this.relationsUpdated(update)) {
       entity.updatedAt = new Date();
     }
-    await this.repo.manager.transaction(
-      async (manager): Promise<void> => {
+    return this.repo.manager.transaction(
+      async (manager): Promise<UserGroup> => {
         await this.updateRelations(manager, updatedEntity);
-        await manager.save(UserGroup, updatedEntity);
+        return manager.save(UserGroup, updatedEntity);
       }
     );
-    return this.repo.findOneOrFail(id);
   }
 
   private relationsUpdated(update: DeepPartial<UserGroup>): boolean {

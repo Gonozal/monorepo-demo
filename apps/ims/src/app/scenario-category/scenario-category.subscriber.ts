@@ -23,6 +23,6 @@ export class ScenarioCategorySubscriber<Entity extends ScenarioCategory>
   }
 
   private setId(entity: Entity) {
-    entity.id = ScenarioCategory.generateId();
+    if (!entity.id) entity.id = ScenarioCategory.generateId();
   }
 }

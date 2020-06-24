@@ -25,13 +25,13 @@ export class CreateTaskTemplateInput {
 
   initialStatusId!: string;
 
-  @Field(() => [AssociationInput])
+  @Field(() => [AssociationInput], { nullable: true })
   @ValidateNested()
-  public users!: AssociationInput[];
+  public users?: AssociationInput[];
 
-  @Field(() => [AssociationInput])
+  @Field(() => [AssociationInput], { nullable: true })
   @ValidateNested()
-  public userGroups!: AssociationInput[];
+  public userGroups?: AssociationInput[];
 }
 
 @InputType()

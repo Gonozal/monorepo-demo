@@ -23,6 +23,6 @@ export class UserSubscriber<Entity extends User>
   }
 
   private setId(entity: Entity) {
-    entity.id = User.generateId();
+    if (!entity.id) entity.id = User.generateId();
   }
 }

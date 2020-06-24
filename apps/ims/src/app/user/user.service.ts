@@ -25,17 +25,16 @@ export class UserQueryService extends TypeOrmQueryService<User> {
   public async updateOne(id: string, update: DeepPartial<User>): Promise<User> {
     this.ensureIdIsNotPresent(update);
     const entity = await this.repo.findOneOrFail(id);
-    const updatedEntity = this.repo.merge(entity, update);
+    const mergedEntity = this.repo.merge(entity, update);
     if (this.relationsUpdated(update)) {
       entity.updatedAt = new Date();
     }
-    await this.repo.manager.transaction(
-      async (manager): Promise<void> => {
-        await this.updateRelations(manager, updatedEntity);
-        await manager.save(User, updatedEntity);
+    return this.repo.manager.transaction(
+      async (manager): Promise<User> => {
+        await this.updateRelations(manager, mergedEntity);
+        return manager.save(User, mergedEntity);
       }
     );
-    return this.repo.findOneOrFail(id);
   }
 
   private relationsUpdated(update: DeepPartial<User>): boolean {

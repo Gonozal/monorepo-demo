@@ -1,3 +1,4 @@
+import { ScenarioCategoryUserGroupPermission } from './permissions/user-group/scenario-category-user-group-permission.entity';
 import { ScenarioCategoryType } from './../../types/scenario-category';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 import { FilterableField } from '@nestjs-query/query-graphql';
@@ -56,6 +57,13 @@ export class ScenarioCategory extends AppEntity {
     (userPermission) => userPermission.scenarioCategory
   )
   public userPermissions?: ScenarioCategoryUserPermission[];
+
+  @HideField()
+  @OneToMany(
+    () => ScenarioCategoryUserGroupPermission,
+    (userGroupPermission) => userGroupPermission.scenarioCategory
+  )
+  public userGroupPermissions?: ScenarioCategoryUserGroupPermission[];
 
   // @HideField()
   // @OneToMany(

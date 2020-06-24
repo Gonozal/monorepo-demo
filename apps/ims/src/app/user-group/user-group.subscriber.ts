@@ -23,6 +23,6 @@ export class UserGroupSubscriber<Entity extends UserGroup>
   }
 
   private setId(entity: Entity) {
-    entity.id = UserGroup.generateId();
+    if (!entity.id) entity.id = UserGroup.generateId();
   }
 }

@@ -1,3 +1,9 @@
+import {
+  CreateOneStatusInput,
+  CreateManyStatusInput,
+  UpdateOneStatusInput,
+  UpdateManyStatusInput,
+} from './status.input';
 import { StatusQueryService } from './status.service';
 import { TaskTemplate } from './../task-template/task-template.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
@@ -19,8 +25,16 @@ export class StatusResolver extends CRUDResolver(Status, {
       decorators: [Authorized(authenticated)],
     },
   },
-  create: { decorators: [Authorized(authenticated)] },
-  update: { decorators: [Authorized(authenticated)] },
+  create: {
+    decorators: [Authorized(authenticated)],
+    CreateOneInput: CreateOneStatusInput,
+    CreateManyInput: CreateManyStatusInput,
+  },
+  update: {
+    decorators: [Authorized(authenticated)],
+    UpdateOneInput: UpdateOneStatusInput,
+    UpdateManyInput: UpdateManyStatusInput,
+  },
   delete: { decorators: [Authorized(authenticated)] },
   relations: {
     many: {

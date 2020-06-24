@@ -1,3 +1,9 @@
+import {
+  CreateOneTaskTemplateInput,
+  CreateManyTaskTemplateInput,
+  UpdateOneTaskTemplateInput,
+  UpdateManyTaskTemplateInput,
+} from './task-template.input';
 import { TaskTemplateQueryService } from './task-template.service';
 import { User } from './../user/user.entity';
 import { Status } from './../status/status.entity';
@@ -21,8 +27,16 @@ export class TaskTemplateResolver extends CRUDResolver(TaskTemplate, {
       decorators: [Authorized(authenticated)],
     },
   },
-  create: { decorators: [Authorized(hasRole('admin.taskTemplates.create'))] },
-  update: { decorators: [Authorized(hasRole('admin.taskTemplates.edit'))] },
+  create: {
+    decorators: [Authorized(hasRole('admin.taskTemplates.create'))],
+    CreateOneInput: CreateOneTaskTemplateInput,
+    CreateManyInput: CreateManyTaskTemplateInput,
+  },
+  update: {
+    decorators: [Authorized(hasRole('admin.taskTemplates.edit'))],
+    UpdateOneInput: UpdateOneTaskTemplateInput,
+    UpdateManyInput: UpdateManyTaskTemplateInput,
+  },
   delete: { decorators: [Authorized(hasRole('admin.taskTemplates.delete'))] },
   relations: {
     many: {

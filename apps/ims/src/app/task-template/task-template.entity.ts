@@ -4,7 +4,7 @@ import { Authorized } from '@monorepo/graphql/authentication-directive';
 import { FilterableField } from '@nestjs-query/query-graphql';
 
 import { Field, HideField, ObjectType, ID } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, ManyToMany } from 'typeorm';
+import { Column, Entity, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
@@ -41,9 +41,11 @@ export class TaskTemplate extends AppEntity {
 
   @HideField()
   @ManyToMany(() => User)
+  @JoinTable()
   public users?: User[];
 
   @HideField()
-  @ManyToMany(() => User)
+  @ManyToMany(() => UserGroup)
+  @JoinTable()
   public userGroups?: UserGroup[];
 }

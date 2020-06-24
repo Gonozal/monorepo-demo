@@ -1,10 +1,11 @@
+import { TaskTemplate } from './../task-template/task-template.entity';
 import { ScenarioCategoryUserGroupPermission } from './../scenario-category/permissions/user-group/scenario-category-user-group-permission.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 
 import { UserGroupRole } from './user-group-role/user-group-role.entity';
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { ObjectType, HideField } from '@nestjs/graphql';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
@@ -62,6 +63,10 @@ export class UserGroup extends AppEntity {
   //   uniqueKey: 'ScenarioAssignments_pkey',
   // })
   // public scenarioCategories?: ScenarioCategory[];
+
+  @HideField()
+  @ManyToMany(() => TaskTemplate, (taskTemplate) => taskTemplate.userGroups)
+  public taskTemplates?: TaskTemplate[];
 
   @HideField()
   @OneToMany(() => User, (user) => user.userGroup)

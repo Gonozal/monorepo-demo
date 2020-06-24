@@ -23,6 +23,6 @@ export class StatusSubscriber<Entity extends Status>
   }
 
   private setId(entity: Entity) {
-    entity.id = Status.generateId();
+    if (!entity.id) entity.id = Status.generateId();
   }
 }
