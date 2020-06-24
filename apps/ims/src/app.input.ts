@@ -8,3 +8,9 @@ export class JoinTableRelationInput {
   @Field(() => [ID], { nullable: false })
   relationIds!: string[];
 }
+
+@InputType()
+export class AssociationInput {
+  @Field(() => ID)
+  id!: string;
+}

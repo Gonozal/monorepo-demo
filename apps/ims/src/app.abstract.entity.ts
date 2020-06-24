@@ -11,7 +11,7 @@ export abstract class AppEntity {
 
   @PrimaryColumn('uuid')
   @Field(() => ID)
-  id: string = uuidV4();
+  public id: string = uuidV4();
 
   @FilterableField(() => Date)
   @CreateDateColumn()

@@ -1,14 +1,15 @@
+import { StatusQueryService } from './status.service';
 import { TaskTemplate } from './../task-template/task-template.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 
 import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
 import { Status } from './status.entity';
-@Resolver()
+@Resolver(() => Status)
 export class StatusResolver extends CRUDResolver(Status, {
   read: {
     many: {
@@ -36,7 +37,7 @@ export class StatusResolver extends CRUDResolver(Status, {
 }) {
   constructor(
     @InjectQueryService(Status)
-    readonly service: QueryService<Status>
+    readonly service: StatusQueryService
   ) {
     super(service);
   }

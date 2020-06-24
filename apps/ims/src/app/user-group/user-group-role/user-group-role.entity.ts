@@ -1,3 +1,4 @@
+import { RoleInput } from './../../role/role.input';
 import { FilterableField } from '@nestjs-query/query-graphql';
 import { Role } from '../../role/role.entity';
 import { roles } from '../../../common/initialize-roles';
@@ -30,12 +31,14 @@ export class UserGroupRole {
   @ManyToOne(() => UserGroup, (userGroup) => userGroup.userGroupRoles)
   userGroup?: UserGroup;
 
-  public static fromRoleIds(
-    roleIds: RoleId[],
+  public static fromRoleInput(
+    roleIds: RoleInput[] | undefined,
     userGroupId: string
   ): UserGroupRoleInterface[] {
-    return roleIds.map((roleId) => {
-      return { userGroupId, roleId };
+    if (!roleIds) return [];
+
+    return roleIds.map((roleInput) => {
+      return { userGroupId, roleId: roleInput.roleId };
     });
   }
 }

@@ -7,6 +7,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { authenticated } from './../../app.authorization';
 import { AppEntity } from '../../app.abstract.entity';
+import { ScenarioCategoryUserPermission } from './permissions/user/scenario-category-user-permission.entity';
 
 @Entity()
 @ObjectType()
@@ -26,7 +27,7 @@ export class ScenarioCategory extends AppEntity {
   @Column()
   public order?: number;
 
-  @FilterableField()
+  @FilterableField(() => ScenarioCategoryType)
   @Field(() => ScenarioCategoryType)
   @Column({ type: 'varchar' })
   public type!: ScenarioCategoryType;
@@ -48,4 +49,18 @@ export class ScenarioCategory extends AppEntity {
     (scenarioCategory) => scenarioCategory.parent
   )
   public children?: ScenarioCategory[];
+
+  @HideField()
+  @OneToMany(
+    () => ScenarioCategoryUserPermission,
+    (userPermission) => userPermission.scenarioCategory
+  )
+  public userPermissions?: ScenarioCategoryUserPermission[];
+
+  // @HideField()
+  // @OneToMany(
+  //   () => ScenarioCategoryUserGroupPermission,
+  //   (userGroupPermission) => userGroupPermission.scenarioCategory
+  // )
+  // public userGroupPermissions?: ScenarioCategoryUserGroupPermission[];
 }

@@ -1,3 +1,4 @@
+import { ScenarioCategoryUserGroupPermission } from './../scenario-category/permissions/user-group/scenario-category-user-group-permission.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 
 import { UserGroupRole } from './user-group-role/user-group-role.entity';
@@ -71,6 +72,13 @@ export class UserGroup extends AppEntity {
     persistence: false,
   })
   public userGroupRoles?: UserGroupRole[];
+
+  @HideField()
+  @OneToMany(
+    () => ScenarioCategoryUserGroupPermission,
+    (scenarioCategoryPermission) => scenarioCategoryPermission.scenarioCategory
+  )
+  public scenarioCategoryPermissions?: ScenarioCategoryUserGroupPermission[];
 
   // @HasMany(() => UserGroupRole)
   // public userGroupRoles?: UserGroupRole[];

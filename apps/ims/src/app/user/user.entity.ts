@@ -10,6 +10,7 @@ import { AppEntity } from '../../app.abstract.entity';
 import { UserGroup } from '../user-group/user-group.entity';
 import { Role } from '../role/role.entity';
 import { UserRole } from './user-role/user-role.entity';
+import { ScenarioCategoryUserPermission } from '../scenario-category/permissions/user/scenario-category-user-permission.entity';
 
 @Entity()
 @ObjectType()
@@ -55,11 +56,12 @@ export class User extends AppEntity {
   @Column({ nullable: true })
   public securePassword?: string;
 
-  // @HasMany(() => ScenarioAssignment, {
-  //   foreignKey: 'assignedToId',
-  //   constraints: false
-  // })
-  // public assignments?: ScenarioAssignment[];
+  @HideField()
+  @OneToMany(
+    () => ScenarioCategoryUserPermission,
+    (scenarioCategoryPermission) => scenarioCategoryPermission.scenarioCategory
+  )
+  public scenarioCategoryPermissions?: ScenarioCategoryUserPermission[];
 
   // @BelongsToMany(() => TaskTemplate, {
   //   through: () => TaskTemplateAssignment,
@@ -67,21 +69,6 @@ export class User extends AppEntity {
   //   constraints: false,
   // })
   // public taskTemplates?: TaskTemplate[];
-
-  // @BelongsToMany(() => ScenarioCategory, {
-  //   through: {
-  //     model: () => ScenarioAssignment,
-  //     scope: {
-  //       scenarioType: 'ScenarioCategory'
-  //     },
-  //     unique: false
-  //   },
-  //   foreignKey: 'assignedToId',
-  //   otherKey: 'scenarioOrCategoryId',
-  //   constraints: false,
-  //   uniqueKey: 'ScenarioAssignments_pkey'
-  // })
-  // public scenarioCategories?: ScenarioCategory[];
 
   @Field(() => ID)
   @Column('uuid')

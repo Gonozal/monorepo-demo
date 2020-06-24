@@ -2,12 +2,13 @@ import {
   Connection,
   EntitySubscriberInterface,
   EventSubscriber,
+  InsertEvent,
 } from 'typeorm';
 
 import { UserGroup } from './user-group.entity';
 
 @EventSubscriber()
-export class UserGroupSubscriber
+export class UserGroupSubscriber<Entity extends UserGroup>
   implements EntitySubscriberInterface<UserGroup> {
   constructor(connection: Connection) {
     connection.subscribers.push(this);
@@ -15,5 +16,13 @@ export class UserGroupSubscriber
 
   listenTo(): typeof UserGroup {
     return UserGroup;
+  }
+
+  public beforeInsert(event: InsertEvent<Entity>): void {
+    this.setId(event.entity);
+  }
+
+  private setId(entity: Entity) {
+    entity.id = UserGroup.generateId();
   }
 }

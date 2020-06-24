@@ -1,3 +1,10 @@
+import { UserQueryService } from './user.service';
+import {
+  CreateOneUserInput,
+  CreateManyUserInput,
+  UpdateOneUserInput,
+  UpdateManyUserInput,
+} from './user.input';
 import { TaskTemplate } from './../task-template/task-template.entity';
 import { UserGroup } from './../user-group/user-group.entity';
 import { RoleId } from './../../types/roles';
@@ -8,10 +15,11 @@ import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
 import { User } from './user.entity';
 
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { getRepository } from 'typeorm';
+import { ScenarioCategoryUserPermission } from '../scenario-category/permissions/user/scenario-category-user-permission.entity';
 
 @Resolver(() => User)
 export class UserResolver extends CRUDResolver(User, {
@@ -23,8 +31,16 @@ export class UserResolver extends CRUDResolver(User, {
       decorators: [Authorized(authenticated)],
     },
   },
-  create: { decorators: [Authorized(hasRole('users.users.create'))] },
-  update: { decorators: [Authorized(hasRole('users.users.edit'))] },
+  create: {
+    decorators: [Authorized(hasRole('users.users.create'))],
+    CreateOneInput: CreateOneUserInput,
+    CreateManyInput: CreateManyUserInput,
+  },
+  update: {
+    decorators: [Authorized(hasRole('users.users.edit'))],
+    UpdateOneInput: UpdateOneUserInput,
+    UpdateManyInput: UpdateManyUserInput,
+  },
   delete: { decorators: [Authorized(hasRole('users.users.delete'))] },
   relations: {
     many: {
@@ -41,6 +57,13 @@ export class UserResolver extends CRUDResolver(User, {
         disableRemove: true,
         disableUpdate: true,
       },
+      scenarioCategoryPermissions: {
+        DTO: ScenarioCategoryUserPermission,
+        decorators: [Authorized(hasRole('admin.scenarioCategories'))],
+        pagingStrategy: PagingStrategies.NONE,
+        disableRemove: true,
+        disableUpdate: true,
+      },
     },
     one: {
       userGroup: {
@@ -52,7 +75,7 @@ export class UserResolver extends CRUDResolver(User, {
 }) {
   constructor(
     @InjectQueryService(User)
-    readonly service: QueryService<User>
+    readonly service: UserQueryService
   ) {
     super(service);
   }

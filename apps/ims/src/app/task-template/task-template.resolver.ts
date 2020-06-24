@@ -1,8 +1,9 @@
+import { TaskTemplateQueryService } from './task-template.service';
 import { User } from './../user/user.entity';
 import { Status } from './../status/status.entity';
 import { Authorized } from '@monorepo/graphql/authentication-directive';
 
-import { QueryService, InjectQueryService } from '@nestjs-query/core';
+import { InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
 import { Resolver } from '@nestjs/graphql';
 
@@ -10,7 +11,7 @@ import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
 import { TaskTemplate } from './task-template.entity';
 import { UserGroup } from '../user-group/user-group.entity';
-@Resolver()
+@Resolver(() => TaskTemplate)
 export class TaskTemplateResolver extends CRUDResolver(TaskTemplate, {
   read: {
     many: {
@@ -51,12 +52,8 @@ export class TaskTemplateResolver extends CRUDResolver(TaskTemplate, {
 }) {
   constructor(
     @InjectQueryService(TaskTemplate)
-    readonly service: QueryService<TaskTemplate>
+    readonly service: TaskTemplateQueryService
   ) {
     super(service);
   }
-
-  // TODO: CreateWithRelation
-  // TODO: SetUsers
-  // TODO: SetUserGroups
 }
