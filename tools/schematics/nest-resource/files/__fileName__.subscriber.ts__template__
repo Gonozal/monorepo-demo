@@ -2,17 +2,28 @@ import {
   Connection,
   EntitySubscriberInterface,
   EventSubscriber,
+  InsertEvent,
 } from 'typeorm';
 
 import { <%= className %> } from './<%= fileName %>.entity';
 
 @EventSubscriber()
-export class <%= className %>Subscriber implements EntitySubscriberInterface<<%= className %>> {
+export class <%= className %>Subscriber<Entity extends <%= className %>>
+  implements EntitySubscriberInterface<<%= className %>> {
+
   constructor(connection: Connection) {
     connection.subscribers.push(this);
   }
 
   listenTo(): typeof <%= className %> {
     return <%= className %>;
+  }
+
+  public beforeInsert(event: InsertEvent<Entity>): void {
+    this.setId(event.entity);
+  }
+
+  private setId(entity: Entity) {
+    entity.id = <%= className %>.generateId();
   }
 }

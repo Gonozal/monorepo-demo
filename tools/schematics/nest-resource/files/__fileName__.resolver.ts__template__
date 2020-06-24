@@ -4,9 +4,17 @@ import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { CRUDResolver, PagingStrategies } from '@nestjs-query/query-graphql';
 import { Resolver, Mutation } from '@nestjs/graphql';
 
+import {
+  CreateOne<%= className %>Input,
+  CreateMany<%= className %>Input,
+  UpdateOne<%= className %>Input,
+  UpdateMany<%= className %>Input,
+} from './<%= fileName %>.input';
 import { hasRole } from '../role/role.authorization';
 import { authenticated } from './../../app.authorization';
 import { <%= className %> } from './<%= fileName %>.entity';
+import { <%= className %>QueryService } from './<%= fileName %>.service';
+
 @Resolver()
 export class <%= className %>Resolver extends CRUDResolver(<%= className %>, {
   read: {
@@ -17,8 +25,12 @@ export class <%= className %>Resolver extends CRUDResolver(<%= className %>, {
       decorators: [Authorized(authenticated)],
     },
   },
-  create: { decorators: [Authorized(authenticated)] },
-  update: { decorators: [Authorized(authenticated)] },
+  create: {
+    decorators: [Authorized(authenticated)],
+  },
+  update: {
+    decorators: [Authorized(authenticated)],
+  },
   delete: { decorators: [Authorized(authenticated)] },
   // Uncomment to define relation field-resolvers
   /*
@@ -30,7 +42,7 @@ export class <%= className %>Resolver extends CRUDResolver(<%= className %>, {
 }) {
   constructor(
     @InjectQueryService(<%= className %>)
-    readonly service: QueryService<<%= className %>>
+    readonly service: <%= className %>QueryService
   ) {
     super(service);
   }

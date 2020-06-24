@@ -1,0 +1,39 @@
+import { RoleId } from './../../types/roles';
+import { InputType, Field, ID, PartialType } from '@nestjs/graphql';
+import {
+  CreateOneInputType,
+  CreateManyInputType,
+  UpdateOneInputType,
+  UpdateManyInputType,
+} from '@nestjs-query/query-graphql';
+import { ValidateNested } from 'class-validator';
+import { <%= className %> } from './<%= fileName %>.entity';
+
+@InputType()
+export class Create<%= className %>Input {}
+
+@InputType()
+export class Update<%= className %>Input extends PartialType(Create<%= className %>Input) {}
+
+@InputType()
+export class CreateOne<%= className %>Input extends CreateOneInputType(
+  '<%= attributeName %>',
+  Create<%= className %>Input
+) {}
+
+@InputType()
+export class CreateMany<%= className %>Input extends CreateManyInputType(
+  '<%= attributeName %>',
+  Create<%= className %>Input
+) {}
+
+@InputType()
+export class UpdateOne<%= className %>Input extends UpdateOneInputType(
+  Update<%= className %>Input
+) {}
+
+@InputType()
+export class UpdateMany<%= className %>Input extends UpdateManyInputType(
+  <%= className %>,
+  Update<%= className %>Input
+) {}
