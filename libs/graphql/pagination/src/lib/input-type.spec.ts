@@ -1,6 +1,5 @@
 import { validate, ValidationError } from 'class-validator';
 import { PaginationInput, paginationDefaults } from './input-type';
-import { AscDesc } from '../utils/types';
 
 type Attributes<T> = { [A in keyof T]: T[A] };
 

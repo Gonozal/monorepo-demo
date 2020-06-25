@@ -1,6 +1,6 @@
 import { Rule } from './rule';
 import { RuleStoreRules, StorableRule } from '../utils/types';
-import { RuleNotFoundError, DuplicateRuleError } from '../utils/errors';
+import { RuleNotFoundError } from '../utils/errors';
 
 export class Store {
   static rules: RuleStoreRules = {};

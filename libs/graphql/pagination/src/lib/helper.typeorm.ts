@@ -9,23 +9,22 @@ export function paginationInputToSQLOffset(
   paginationInput: PaginationInput
 ): SQLOffset {
   const { first, after, last, before } = paginationInput;
-
-  if ((first && last) || (after && before)) {
+  if (first && (last || before)) {
     throw new Error(
       'For now, either forward or backward pagination parameters must be used, not both'
     );
   }
 
-  if (first) {
-    const offset = after ? cursorToOffset(after) : 0;
-    return { skip: offset, take: first };
-  } else if (last && before) {
+  if (last && before) {
     const offset = Math.max(cursorToOffset(before) - last - 1, 0);
     const take = Math.min(cursorToOffset(before) - 1, last);
     return { skip: offset, take: take };
+  } else if (first) {
+    const offset = after ? cursorToOffset(after) : 0;
+    return { skip: offset, take: first };
   }
   throw new Error(
-    "One pair of 'first & after' or 'last & before' must be supplied"
+    'Either forward or backward pagination parameters must be used'
   );
 }
 

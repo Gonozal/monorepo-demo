@@ -1,5 +1,5 @@
 import { AscDesc } from './../utils/types';
-import { Field, ObjectType, Int, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
 registerEnumType(AscDesc, {

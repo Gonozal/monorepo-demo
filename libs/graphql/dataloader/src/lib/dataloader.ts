@@ -1,3 +1,4 @@
+import { GenericRecord, GenericWhereParameter } from './../types/generics';
 import { NestDataLoader } from 'nestjs-dataloader';
 import * as DataLoader from 'dataloader';
 import { SimplifiedFindOptions } from '../types/query-options';
@@ -13,8 +14,8 @@ export abstract class GraphQLDataLoader<T>
   implements NestDataLoader<SimplifiedFindOptions<T>, T[]> {
   public primaryRepository!: Repository<T>;
 
-  private transformMergedConditions(result: Record<string, any>) {
-    const transformed: Record<string, { where: Record<string, any> }> = {};
+  private transformMergedConditions(result: GenericRecord) {
+    const transformed: Record<string, GenericWhereParameter> = {};
     Object.keys(result).forEach((resultKey) => {
       transformed[resultKey] = {
         where: { [resultKey]: In(result[resultKey]) },
@@ -38,8 +39,10 @@ export abstract class GraphQLDataLoader<T>
       );
   }
 
-  protected mergeFindOptions(keys: readonly SimplifiedFindOptions<T>[]) {
-    const result: Record<string, any> = {};
+  protected mergeFindOptions(
+    keys: readonly SimplifiedFindOptions<T>[]
+  ): Record<string, GenericWhereParameter> {
+    const result: GenericRecord = {};
     keys.forEach((key) => {
       const conditions = key.where;
       const conditionKeys = Object.keys(conditions);
@@ -67,8 +70,8 @@ export abstract class GraphQLDataLoader<T>
   }
 
   protected async queryBatches(
-    batches: Record<string, { where: Record<string, any> }>
-  ) {
+    batches: Record<string, GenericWhereParameter>
+  ): Promise<Record<string, Record<string, T[]>>> {
     const results: Record<string, Record<string, T[]>> = {};
     const keys = Object.keys(batches);
     await Promise.all(
